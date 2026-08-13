@@ -1,0 +1,474 @@
+/* === ГЛОБАЛЬНЫЕ СТИЛИ И ТЕМЫ === */
+:root {
+    --bg-color: #f0f2f5;
+    --text-color: #333;
+    --card-bg: #ffffff;
+    --primary-color: #007bff;
+    --accent-color: #00d2ff;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+    --border-radius: 16px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Тёмная тема (по умолчанию по ТЗ) */
+body.dark-theme {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --primary-color: #bb86fc;
+    --accent-color: #03dac6;
+    --shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+    overflow: hidden; /* Чтобы не скроллилось как сайт, а было как приложение */
+    height: 100vh;
+    width: 100vw;
+}
+
+/* === ЭКРАНЫ === */
+.screen {
+    display: none;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* === ЭКРАН ВХОДА === */
+#login-screen {
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e1e1e 0%, #000000 100%);
+    z-index: 1000;
+}
+
+.login-container {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-container h1 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+#account-list {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.account-slot {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.account-slot:hover {
+    transform: scale(1.02);
+    background: rgba(255,255,255,0.1);
+}
+
+.account-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* === СТАТУС БАР (ВЕРХНЯЯ ПАНЕЛЬ) === */
+.status-bar {
+    height: 40px;
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    font-size: 0.9rem;
+    z-index: 900;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.left-status, .right-status {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.center-status {
+    font-weight: 600;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.balance-badge {
+    background: var(--success-color);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+/* === РАБОЧИЙ СТОЛ (ПАПКИ) === */
+.desktop {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+#app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 20px;
+    padding-bottom: 80px; /* Место для дока */
+}
+
+.app-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.app-icon:active {
+    transform: scale(0.9);
+}
+
+.icon-box {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin-bottom: 5px;
+}
+
+/* Папки */
+.folder-icon .icon-box {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.app-name {
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--text-color);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Док-панель */
+.dock {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    padding: 10px 20px;
+    border-radius: 24px;
+    display: flex;
+    gap: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    z-index: 800;
+}
+
+.dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.dock-item:active {
+    transform: scale(0.8) translateY(10px);
+}
+
+.dock-item i {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.dock-item span {
+    font-size: 0.6rem;
+    color: #fff;
+}
+
+/* === ОКНО ПРИЛОЖЕНИЯ === */
+.app-window {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.app-window.hidden {
+    display: none;
+    animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100%); opacity: 0; }
+}
+
+.window-header {
+    height: 50px;
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.back-btn, .minimize-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.window-header h2 {
+    flex: 1;
+    text-align: center;
+    font-size: 1.1rem;
+    margin-right: 40px; /* Компенсация кнопки назад */
+}
+
+.window-controls {
+    position: absolute;
+    right: 15px;
+}
+
+.window-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+/* === УВЕДОМЛЕНИЯ === */
+#notification-area {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 90%;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+.notification {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-left: 4px solid var(--primary-color);
+    animation: fadeIn 0.3s, fadeOut 0.3s 2.7s forwards;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
+/* === КНОПКИ И ФОРМЫ === */
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 10px;
+    transition: opacity 0.2s;
+}
+
+.btn-primary:active {
+    opacity: 0.8;
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-color);
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+input:focus {
+    border-color: var(--primary-color);
+}
+
+/* === МОДАЛЬНЫЕ ОКНА === */
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-overlay.hidden {
+    display: none;
+}
+
+.modal {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 400px;
+    box-shadow: var(--shadow);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* === СКРОЛЛБАР === */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+}
+
+/* === СПЕЦИФИЧНЫЕ ЭЛЕМЕНТЫ ИНТЕРФЕЙСА === */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+.badge-success { background: var(--success-color); color: #fff; }
+.badge-danger { background: var(--danger-color); color: #fff; }
+.badge-warning { background: #ffc107; color: #000; }
+
+/* Анимация папок при открытии */
+.folder-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+    padding: 10px;
+    border-radius: 12px;
+    margin-top: 5px;
+}
