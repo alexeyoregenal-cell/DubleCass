@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>DubleCass V19 — Full Edition</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#f0f2f5;min-height:100vh;color:#1f2937;font-size:14px;line-height:1.5}
+body.dark{background:#0f172a;color:#e2e8f0}
+body.dark .card{background:#1e293b;color:#e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+body.dark .input{background:#0f172a;color:#e2e8f0;border-color:#334155}
+body.dark .list-item{background:#0f172a;color:#e2e8f0}
+body.dark .list-item-sub{color:#94a3b8}
+body.dark .modal-box{background:#1e293b;color:#e2e8f0}
+body.dark .modal-header{border-color:#334155}
+body.dark .tabs{background:#1e293b;border-color:#334155}
+body.dark .tab{color:#94a3b8}
+body.dark .tab.active{color:#60a5fa;border-color:#60a5fa}
+body.dark .header{background:linear-gradient(135deg,#0f172a,#1e1b4b)}
+body.dark .info-lbl{color:#94a3b8}
+body.dark .info-val{color:#e2e8f0}
+body.dark .info-row{border-color:#334155}
+body.dark .section{color:#cbd5e1;border-color:#334155}
+body.dark .label{color:#cbd5e1}
+body.dark .btn-secondary{background:#334155;color:#e2e8f0}
+body.dark .auth-card,body.dark .modal-box{background:#1e293b;color:#e2e8f0}
+body.dark .faction-hero{background:linear-gradient(135deg,#1e293b,#0f172a)}
+body.dark .auth-page{background:linear-gradient(135deg,#1e1b4b,#0f172a)}
+body.dark select.input{background:#1e293b;color:#e2e8f0}
+body.dark option{background:#1e293b;color:#e2e8f0}
+.container{max-width:500px;margin:0 auto;padding:12px;padding-bottom:80px}
+.btn{padding:12px 20px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;user-select:none}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:#3b82f6;color:#fff}.btn-success{background:#22c55e;color:#fff}
+.btn-danger{background:#ef4444;color:#fff}.btn-warning{background:#f59e0b;color:#fff}
+.btn-secondary{background:#e5e7eb;color:#374151}.btn-purple{background:#8b5cf6;color:#fff}
+.btn-pink{background:#ec4899;color:#fff}.btn-dark{background:#1f2937;color:#fff}
+.btn-cyan{background:#06b6d4;color:#fff}.btn-orange{background:#f97316;color:#fff}
+.btn-full{width:100%}.btn-sm{padding:8px 12px;font-size:12px}.mt8{margin-top:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card-head{font-size:16px;font-weight:700;margin-bottom:12px}
+.input{width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;margin-bottom:12px;font-family:inherit}
+.input:focus{outline:none;border-color:#3b82f6}
+.label{display:block;margin-bottom:4px;font-weight:500;color:#374151;font-size:13px}
+select.input{background:#fff}
+.header{background:linear-gradient(135deg,#1e40af,#7c3aed);color:#fff;padding:16px;border-radius:0 0 20px 20px}
+.header-title{font-size:20px;font-weight:700}.header-sub{opacity:.9;font-size:12px;margin-top:4px}
+.badge{padding:3px 8px;border-radius:12px;font-size:10px;font-weight:600;display:inline-block;margin-left:4px}
+.badge-admin{background:#fbbf24;color:#000}
+.tabs{display:flex;background:#fff;overflow-x:auto;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:100}
+.tab{flex:1;min-width:45px;padding:8px 2px;text-align:center;font-size:9px;color:#6b7280;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:#3b82f6;border-bottom-color:#3b82f6;font-weight:600}
+.tab-icon{font-size:18px;display:block;margin-bottom:2px}
+.list-item{display:flex;align-items:center;padding:12px;background:#f9fafb;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:background .15s}
+.list-item:hover{background:#f3f4f6}
+.list-item-icon{font-size:24px;margin-right:10px}
+.list-item-content{flex:1;min-width:0}
+.list-item-title{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis}
+.list-item-sub{font-size:11px;color:#6b7280;margin-top:2px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:12px;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;animation:slideUp .25s}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:14px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:inherit;z-index:1}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;font-size:28px;color:#9ca3af;cursor:pointer;line-height:1}
+.modal-body{padding:14px}
+.info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
+.info-lbl{color:#6b7280}.info-val{font-weight:600}
+.section{font-size:13px;font-weight:600;color:#374151;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid #e5e7eb}
+.empty{text-align:center;padding:30px}.empty-icon{font-size:48px}.empty-txt{color:#6b7280;font-size:13px}
+.qr-box{display:flex;flex-direction:column;align-items:center;padding:16px;background:#f9fafb;border-radius:10px;margin:12px 0}
+.toggle{width:40px;height:22px;background:#e5e7eb;border-radius:11px;position:relative;cursor:pointer;display:inline-block;vertical-align:middle}
+.toggle.on{background:#22c55e}
+.toggle::after{content:"";position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s}
+.toggle.on::after{left:20px}
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e40af,#7c3aed);padding:16px}
+.auth-card{background:#fff;border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.auth-logo{text-align:center;margin-bottom:20px}
+.auth-logo-icon{font-size:40px}.auth-logo-text{font-size:24px;font-weight:700;color:#1e40af}
+.auth-err{background:#fef2f2;color:#dc2626;padding:10px;border-radius:8px;margin-bottom:12px;font-size:12px}
+.bank-card{color:#fff;border-radius:18px;padding:20px;margin-bottom:16px;position:relative;min-height:190px;cursor:pointer;overflow:hidden}
+.bank-card.blue{background:linear-gradient(135deg,#1e3a8a,#3b82f6)}
+.bank-card.gold{background:linear-gradient(135deg,#92400e,#fbbf24)}
+.bank-card.black{background:linear-gradient(135deg,#000,#374151)}
+.bank-card.green{background:linear-gradient(135deg,#14532d,#22c55e)}
+.bank-card-chip{width:46px;height:34px;background:linear-gradient(135deg,#fde68a,#f59e0b);border-radius:8px;margin-bottom:18px}
+.bank-card-number{font-size:20px;letter-spacing:3.5px;font-family:monospace;margin-bottom:12px}
+.bank-card-name{font-size:12px;text-transform:uppercase;opacity:.92;font-weight:600}
+.bank-card-balance{position:absolute;bottom:20px;right:20px;text-align:right}
+.bank-card-balance-val{font-size:22px;font-weight:700}
+.passport-card{background:linear-gradient(180deg,#1a5276 0%,#1a5276 35%,#fdfefe 35%);color:#000;border-radius:8px;padding:0;margin-bottom:16px;overflow:hidden;border:2px solid #1a5276}
+.passport-header{background:#1a5276;color:#f4d03f;text-align:center;padding:10px;font-size:11px;letter-spacing:2px;font-weight:700}
+.passport-body{background:#fdfefe;padding:16px}
+.passport-title{text-align:center;color:#1a5276;font-size:16px;font-weight:700;margin-bottom:12px}
+.passport-field{margin-bottom:8px}
+.passport-field-label{font-size:9px;color:#666;text-transform:uppercase}
+.passport-field-value{font-size:13px;font-weight:600;border-bottom:1px solid #ccc}
+.passport-mrz{font-family:monospace;font-size:8px;background:#fff;padding:6px;margin-top:12px;letter-spacing:1px}
+.wanted{background:#dc2626;color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block;margin-left:4px}
+.faction-hero{background:linear-gradient(135deg,#1e3a5f,#4c1d95);border-radius:20px;padding:20px 18px;margin-bottom:14px;color:#fff}
+.casino-tile{border-radius:16px;padding:14px 8px;box-shadow:0 4px 14px rgba(0,0,0,.07);transition:transform .15s;cursor:pointer}
+.casino-tile:active{transform:scale(.98)}
+.acct-slot{border:3px solid #e5e7eb;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px}
+.acct-slot:hover{border-color:#3b82f6;transform:translateY(-2px)}
+.acct-slot.active{border-color:#22c55e;background:#f0fdf4}
+.tablet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:2000;display:flex;align-items:center;justify-content:center;animation:fadeIn .3s}
+.tablet-frame{width:min(92vw,900px);height:min(90vh,700px);background:linear-gradient(180deg,#1e293b,#0f172a);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.6);border:2px solid #334155;animation:slideUp .4s}
+.tablet-body{flex:1;overflow-y:auto;padding:16px}
+.tablet-folder{background:rgba(30,41,59,.5);border:1px solid #334155;border-radius:16px;padding:12px;margin-bottom:16px}
+.tablet-folder-title{color:#94a3b8;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:4px}
+.tablet-app{display:inline-flex;flex-direction:column;align-items:center;padding:10px 6px;cursor:pointer;border-radius:14px;transition:all .2s;width:90px;vertical-align:top;margin:0 4px 8px 0}
+.tablet-app:hover{background:rgba(99,102,241,.15);transform:translateY(-2px)}
+.tablet-app-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:6px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.tablet-app-name{color:#e2e8f0;font-size:11px;text-align:center;line-height:1.2}
+.scam-card{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#e0e0e0;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #e94560}
+.notif-popup{position:fixed;top:20px;right:20px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:14px 18px;border-radius:12px;z-index:3000;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:slideIn .3s;max-width:320px;font-size:13px}
+@keyframes slideIn{from{transform:translateX(120%)}to{transform:translateX(0)}}
+.geo-card{background:linear-gradient(135deg,#0f172a,#1e293b);color:#e2e8f0;border-radius:16px;padding:16px;border:1px solid #334155}
+.geo-dot{width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:6px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.achievement{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;padding:10px;border-radius:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.weather-card{background:linear-gradient(135deg,#0ea5e9,#3b82f6);color:#fff;border-radius:16px;padding:16px;text-align:center}
+.stat-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(0,0,0,.15);margin:2px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="md"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ===== FALLBACK ДЛЯ file:// (без внешних скриптов) ===== */
+if(typeof QRCode==='undefined'){
+  window.QRCode=function(el,opts){
+    if(typeof el==='string')el=document.getElementById(el);
+    if(!el)return;
+    var t=opts.text||'';
+    el.innerHTML='<div style="background:#fff;padding:14px;border:2px dashed #333;font-family:monospace;font-size:10px;word-break:break-all;text-align:center;color:#000;border-radius:8px"><div style="font-size:22px;margin-bottom:8px">📋 КОД</div><div style="background:#f5f5f5;padding:8px;border-radius:4px;user-select:all;cursor:pointer" onclick="navigator.clipboard.writeText(\''+t.replace(/'/g,"\\'")+'\').then(function(){alert(\'Скопировано!\')})">'+t+'</div><div style="font-size:10px;color:#666;margin-top:6px">Нажми чтобы скопировать</div></div>';
+  };
+}
+
+/* ==================== БАЗА ДАННЫХ ==================== */
+var C={KEY:"DC24",enc:function(t){var k=this.KEY,r=[];for(var i=0;i<t.length;i++)r.push(t.charCodeAt(i)^k.charCodeAt(i%k.length));return"DC:"+btoa(unescape(encodeURIComponent(String.fromCharCode.apply(null,r))))},dec:function(e){if(!e||e.indexOf("DC:")!==0)return null;try{var d=atob(e.slice(3)),k=this.KEY,r=[];for(var i=0;i<d.length;i++)r.push(d.charCodeAt(i)^k.charCodeAt(i%k.length));return decodeURIComponent(escape(String.fromCharCode.apply(null,r)))}catch(x){return null}}};
+
+var db={d:null,init:function(){this.d=JSON.parse(localStorage.getItem("dc20")||"{}");["users","wanted","companies","priceHistory","userStocks","channels","channelMsgs","aiMsgs","cards","cardReqs","credits","deposits","passports","passReqs","currencies","denominations","wallets","transactions","factions","ranks","members","categories","creditHistory","fines","vendorCodes","promos","pendingTx","auditLogs","leaderApps","gameRoles","userRoleGrants","messages","shopProducts","shopJobApps","shopReceipts","smsInbox","scamEvents","userApps","domains","websites","gos_payments","elections","court_cases","land_plots","achievements","mailReq","mailbox","pensionAssign","govVacancies","blackMarket"].forEach(function(s){if(!db.d[s])db.d[s]=[]});if(!this.d.nid)this.d.nid=1;if(!this.d.aid)this.d.d.aid=null;if(!this.d.slots)this.d.slots=[null,null,null];this.sv()},sv:function(){localStorage.setItem("dc20",JSON.stringify(this.d))},add:function(s,o){o.id=this.d.nid++;o.cat=Date.now();this.d[s].push(o);this.sv();return o.id},get:function(s,id){return this.d[s].find(function(x){return x.id===id})},all:function(s){return this.d[s]},by:function(s,f,v){return this.d[s].filter(function(x){return x[f]===v})},one:function(s,f,v){return this.d[s].find(function(x){return x[f]===v})},upd:function(s,id,u){var i=this.d[s].findIndex(function(x){return x.id===id});if(i>=0){for(var k in u)this.d[s][i][k]=u[k];this.sv()}},del:function(s,id){this.d[s]=this.d[s].filter(function(x){return x.id!==id});this.sv()},cnt:function(s){return this.d[s].length}};
+
+var U={gId:function(){var r="";for(var i=0;i<10;i++)r+=Math.floor(Math.random()*10);return r},gCard:function(){var r="";for(var i=0;i<16;i++)r+=Math.floor(Math.random()*10);return r},hash:function(p){var h=0;for(var i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h=h&h}return h.toString(16)},money:function(a){return(a||0).toFixed(2)},rnd:function(a,b){return Math.floor(Math.random()*(b-a+1))+a},fCard:function(n){return n?n.replace(/(.{4})/g,"$1 ").trim():""}};
+
+var COUNTRY={name:"РЕСПУБЛИКА ДУБЛИКА",short:"DUBLIKA"};
+var user=null,tab="home",currentSlot=0,weatherData=null,geoWatchId=null,weatherShown=false;
+db.init();
+
+/* ==================== РЕЙТИНГ (старт 10000) ==================== */
+// Рейтинг стартует с 10000, а не 100
+function getRep(){return user?(user.rep||10000):100}
+function setRep(v){if(user){user.rep=Math.max(0,v);db.upd("users",user.id,{rep:user.rep})}}
+
+/* ==================== ВАЛЮТЫ ==================== */
+if(db.cnt("currencies")==0){
+  var cid=db.add("currencies",{name:"Дубли",sym:"Ð"});
+  [5000,1000,500,100,50].forEach(function(v,i){db.add("denominations",{curId:cid,val:v,type:"bill",color:["#dc2626","#22c55e","#8b5cf6","#f59e0b","#3b82f6"][i]})});
+  [10,5,1].forEach(function(v,i){db.add("denominations",{curId:cid,val:v,type:"coin",color:["#fbbf24","#ef4444","#94a3b8"][i]})});
+  var eid=db.add("currencies",{name:"Евро",sym:"€"});
+  [500,100,50].forEach(function(v,i){db.add("denominations",{curId:eid,val:v,type:"bill",color:["#22c55e","#f59e0b","#3b82f6"][i]})});
+}
+if(db.cnt("categories")==0){
+  [{c:"bank",n:"Банк",i:"🏦"},{c:"mvd",n:"МВД",i:"🛡️"},{c:"fsb",n:"ФСБ",i:"🕵️"},{c:"pravo",n:"Правительство",i:"⚖️"},{c:"shop",n:"Торговля",i:"🏪"},{c:"utd",n:"Транспорт",i:"🚇"}].forEach(function(x){db.add("categories",{code:x.c,name:x.n,icon:x.i})});
+}
+
+/* ==================== МИР ==================== */
+function seedWorld(){
+  if(db.d.worldV1)return;
+  var fid=db.add("factions",{name:"Центральный банк Дублики",icon:"🏛️",cat:"bank",central:true,treasury:100000000,creditPct:10,depPct:5,admins:[]});
+  ["Кассир","Экономист","Аналитик","Инспектор","Нач. отдела","Зам. управления","Управляющий","Глав. экономист","Зам. предс.","Председатель ЦБ"].forEach(function(n,i){db.add("ranks",{fid:fid,name:n,lvl:(i+1)*10,perms:i===9?["ADD","REM","CRED","DEP","CARDS"]:[]})});
+  var mf=db.add("factions",{name:"МВД Дублики",icon:"🛡️",cat:"mvd",isMVD:true,treasury:100000,admins:[],ukArticles:[],koapArticles:[]});
+  ["Курсант","Мл. сержант","Сержант","Ст. сержант","Прапорщик","Ст. прапорщик","Мл. лейтенант","Лейтенант","Ст. лейтенант","Капитан","Майор","Подполковник","Полковник","Генерал-майор","Генерал-лейтенант","Нач. УПР","Зам. ЛД","Ст. состав","Помощник ЛД","Лидер МВД"].forEach(function(n,i){db.add("ranks",{fid:mf,name:n,lvl:(i+1)*5,perms:i===19?["ADD","REM","PROM","BLOCK","WANT","FINE","PASS"]:[]})});
+  var ff=db.add("factions",{name:"ФСБ Дублики",icon:"🕵️",cat:"fsb",isFSB:true,treasury:100000,admins:[]});
+  for(var i=0;i<20;i++)db.add("ranks",{fid:ff,name:"Ранг "+(i+1),lvl:(i+1)*5,perms:i===19?["ADD","REM"]:[]});
+  var pf=db.add("factions",{name:"Правительство Дублики",icon:"⚖️",cat:"pravo",isPRVO:true,treasury:5000000,taxRate:10,admins:[]});
+  for(var i=0;i<20;i++)db.add("ranks",{fid:pf,name:"Ранг "+(i+1),lvl:(i+1)*5,perms:i===19?["ADD","REM","PROM","TAX"]:[]});
+  db.d.worldV1=true;db.sv();
+}
+seedWorld();
+
+/* ==================== УТИЛИТЫ ==================== */
+function curDub(){return db.one("currencies","sym","Ð")||db.all("currencies")[0]}
+function getWallet(uid,curId){var w=db.one("wallets","ukey",uid+"_"+curId);if(!w){var wid=db.add("wallets",{ukey:uid+"_"+curId,userId:uid,curId:curId,bills:{}});w=db.get("wallets",wid)}return w}
+function getBalance(uid,curId){var w=getWallet(uid,curId);var total=0;var denoms=db.by("denominations","curId",curId);for(var i=0;i<denoms.length;i++){total+=(w.bills[denoms[i].id]||0)*denoms[i].val}return total}
+function addMoney(uid,curId,denomId,count){var w=getWallet(uid,curId);if(!w.bills)w.bills={};w.bills[denomId]=(w.bills[denomId]||0)+count;db.upd("wallets",w.id,{bills:w.bills})}
+function withdrawMoney(uid,curId,amt){var w=getWallet(uid,curId);var denoms=db.by("denominations","curId",curId).sort(function(a,b){return b.val-a.val});var rem=amt;for(var i=0;i<denoms.length&&rem>0;i++){var have=w.bills[denoms[i].id]||0;var take=Math.min(have,Math.floor(rem/denoms[i].val));if(take>0){w.bills[denoms[i].id]=have-take;rem-=take*denoms[i].val}}db.upd("wallets",w.id,{bills:w.bills})}
+function giveDenoms(uid,curId,amt){var ds=db.by("denominations","curId",curId).sort(function(a,b){return b.val-a.val});var rem=amt;for(var i=0;i<ds.length&&rem>0;i++){var cnt=Math.floor(rem/ds[i].val);if(cnt>0){addMoney(uid,curId,ds[i].id,cnt);rem-=cnt*ds[i].val}}}
+function pushSms(uid,txt){if(!uid||!txt)return;db.add("smsInbox",{uid:uid,txt:String(txt).slice(0,500),t:Date.now(),read:false})}
+function isW(uid){return db.by("wanted","uid",uid).some(function(w){return w.act})}
+function getRate(){return parseInt(localStorage.getItem("eurRate"))||80}
+function getMVDs(){return db.all("factions").filter(function(f){return f.isMVD||f.cat==="mvd"})}
+function getBanks(){return db.all("factions").filter(function(f){return f.cat==="bank"||f.central})}
+function hasP(fid,p){if(!user)return false;if(user.adm)return true;var m=db.by("members","userId",user.id).find(function(x){return x.fid===fid});if(!m)return false;var r=db.get("ranks",m.rid);return r&&r.perms&&r.perms.indexOf(p)>=0}
+function isLeaderOrAdmin(fid){if(!user)return false;if(user.adm)return true;var f=db.get("factions",fid);return f&&f.admins&&f.admins.indexOf(user.id)>=0}
+function canUseMvdActions(){if(!user)return false;if(user.adm)return true;return db.by("members","userId",user.id).some(function(m){var f=db.get("factions",m.fid);return f&&(f.isMVD||f.cat==="mvd")})}
+function canUseFSB(){if(!user)return false;if(user.adm)return true;return db.by("members","userId",user.id).some(function(m){var f=db.get("factions",m.fid);return f&&(f.isFSB||f.cat==="fsb")})}
+function logRu(det){try{db.add("auditLogs",{uid:user?user.id:0,tp:"журнал",det:(det||"").slice(0,500),t:Date.now()})}catch(e){}}
+function showNotif(title,text){var n=document.createElement("div");n.className="notif-popup";n.innerHTML="<b>"+title+"</b><div style='font-size:12px;margin-top:4px'>"+text+"</div>";document.body.appendChild(n);setTimeout(function(){n.style.animation="slideIn .3s reverse";setTimeout(function(){n.remove()},300)},3500)}
+function isPravoLeader(){var f=db.all("factions").find(function(x){return x.isPRVO||x.cat==="pravo"});if(!f)return false;return f.admins&&f.admins.indexOf(user.id)>=0}
+
+/* ==================== ДОСТИЖЕНИЯ (НОВАЯ ФИЧА) ==================== */
+function checkAchievements(){
+  if(!user)return;
+  var achs=db.all("achievements").filter(function(a){return a.uid===user.id});
+  var has=function(c){return achs.some(function(a){return a.code===c})};
+  var add=function(c,n,i,d){if(!has(c)){db.add("achievements",{uid:user.id,code:c,name:n,icon:i,desc:d,t:Date.now()});showNotif("🏆 Достижение!",i+" "+n)}};
+  var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;
+  if(bal>=10000)add("rich1","Первая десятка","💰","Накопил 10 000 Ð");
+  if(bal>=100000)add("rich2","Богач","💎","Накопил 100 000 Ð");
+  if(bal>=1000000)add("rich3","Миллионер","👑","Накопил 1 000 000 Ð");
+  if(db.by("passports","userId",user.id).length)add("pass1","Гражданин","🪪","Получил паспорт");
+  if(db.by("cards","userId",user.id).length)add("card1","Банковский","💳","Получил карту");
+  if(db.by("members","userId",user.id).length)add("worker","Трудяга","💼","Устроился на работу");
+  if(db.all("factions").some(function(f){return f.bizOwnerId===user.id}))add("boss","Бизнесмен","🏪","Открыл бизнес");
+}
+
+/* ==================== ПОГОДА (НОВАЯ ФИЧА) ==================== */
+function updateWeather(){
+  if(!user)return;
+  var conditions=["☀️ Ясно","⛅ Облачно","🌧️ Дождь","⛈️ Гроза","🌨️ Снег","🌫️ Туман"];
+  var temp=U.rnd(-5,30);
+  weatherData={temp:temp,cond:conditions[U.rnd(0,conditions.length-1)],wind:U.rnd(0,20),humidity:U.rnd(30,90),updated:Date.now()};
+  localStorage.setItem("weather_"+user.id,JSON.stringify(weatherData));
+}
+function getWeather(){
+  if(weatherData&&Date.now()-weatherData.updated<300000)return weatherData;
+  var cached=localStorage.getItem("weather_"+(user?user.id:""));
+  if(cached){try{var d=JSON.parse(cached);if(Date.now()-d.updated<300000){weatherData=d;return d}}catch(e){}}
+  updateWeather();return weatherData;
+}
+
+/* ==================== РЕНДЕР ==================== */
+function render(){
+  try{
+    var app=document.getElementById("app");
+    var uid=localStorage.getItem("u20");
+    if(uid)user=db.get("users",parseInt(uid));
+    if(!user){app.innerHTML=slotsScreen();return}
+    var c="";
+    if(tab=="home")c=homeP();
+    else if(tab=="pass")c=passP();
+    else if(tab=="card")c=cardP();
+    else if(tab=="fact")c=factP();
+    else if(tab=="bank")c=bankP();
+    else if(tab=="stock")c=stockP();
+    else if(tab=="casino")c=casinoP();
+    else if(tab=="chat")c=chatP();
+    else if(tab=="people")c=peopleP();
+    else if(tab=="prof")c=profP();
+    else if(tab=="adm")c=admP();
+    app.innerHTML=hdr()+tabsH()+'<div class="container">'+c+'</div>';
+    checkAchievements();
+    scamCheck();
+  }catch(e){console.error(e);document.getElementById("app").innerHTML='<div class="auth-page"><div class="auth-card"><div class="auth-err">Ошибка: '+e.message+'</div><button class="btn btn-primary btn-full" onclick="location.reload()">Обновить</button></div></div>'}
+}
+
+/* ==================== 3 СЛОТА АККАУНТОВ ==================== */
+function slotsScreen(){
+  var slots=db.d.slots;
+  var h='<div class="auth-page"><div class="auth-card"><div class="auth-logo"><div class="auth-logo-icon">🏦</div><div class="auth-logo-text">DubleCass V19</div><div style="font-size:10px;color:#6b7280">'+COUNTRY.name+'</div></div>';
+  h+='<div style="font-size:12px;color:#64748b;text-align:center;margin-bottom:16px">Выберите профиль или создайте новый</div>';
+  for(var i=0;i<3;i++){
+    var uid=slots[i];var u=uid?db.get("users",uid):null;
+    if(u){
+      var dub=curDub();var bal=dub?getBalance(uid,dub.id):0;
+      h+='<div class="acct-slot" onclick="switchSlot('+i+')"><div style="font-size:36px">'+(u.ph||"👤")+'</div><div style="font-weight:700;margin-top:6px">@'+u.nick+'</div><div style="font-size:11px;color:#6b7280">'+U.money(bal)+' Ð · Слот '+(i+1)+'</div></div>';
+    }else{
+      h+='<div class="acct-slot" onclick="createSlot('+i+')"><div style="font-size:36px;opacity:.3">➕</div><div style="color:#94a3b8;margin-top:6px">Слот '+(i+1)+' — свободно</div></div>';
+    }
+  }
+  h+='</div></div>';return h;
+}
+function createSlot(i){
+  var nick=prompt("Ник для слота "+(i+1)+":");
+  if(!nick||nick.trim().length<2)return;nick=nick.trim();
+  if(db.one("users","nick",nick)){alert("Ник занят");return}
+  var pw=prompt("Пароль (мин 4):");if(!pw||pw.length<4)return alert("Мин 4 символа");
+  var uid=db.add("users",{nick:nick,pwh:U.hash(pw),adm:false,blk:false,accB:false,ph:"👤",rep:10000});
+  var dub=curDub();if(dub)giveDenoms(uid,dub.id,5000);
+  db.add("creditHistory",{userId:uid,score:100,recs:[]});
+  if(db.d.aid===null){db.d.aid=uid;db.upd("users",uid,{adm:true})}
+  db.d.slots[i]=uid;db.sv();
+  localStorage.setItem("u20",uid);user=db.get("users",uid);
+  pushSms(uid,"Добро пожаловать! Стартовый капитал: 5000 Ð.");
+  tab="home";render();
+}
+function switchSlot(i){
+  var uid=db.d.slots[i];if(!uid)return;
+  var u=db.get("users",uid);if(!u)return;
+  localStorage.setItem("u20",uid);user=u;tab="home";render();
+}
+function backToSlots(){localStorage.removeItem("u20");user=null;render()}
+
+/* ==================== МОШЕННИКИ ==================== */
+function scamCheck(){
+  if(!user)return;
+  var dub=curDub();if(!dub)return;
+  var bal=getBalance(user.id,dub.id);
+  var hasDebt=db.by("fines","uid",user.id).some(function(f){return!f.paid})||db.by("credits","userId",user.id).some(function(c){return c.st==="active"});
+  if(bal<3000&&hasDebt&&!localStorage.getItem("scam_"+user.id)){
+    setTimeout(scamOffer,3000);
+  }
+}
+function scamOffer(){
+  md("📨 Неизвестный номер",'<div class="scam-card"><p style="font-size:13px;line-height:1.6">🕶️ <b>Неизвестный:</b><br><br>"Слышь, брат, вижу у тебя проблемы с долгами. Переводи 500 Ð, а я через связи в ЦБ спишу тебе весь долг. Точно работает, только быстро."<br><br>⚠️ <i>Это подозрительно... Можно спалиться.</i></p></div><div class="grid-2 mt8"><button class="btn btn-danger" onclick="scamAccept()">💸 Перевести 500</button><button class="btn btn-success" onclick="scamReport()">🚨 В МВД</button></div><button class="btn btn-secondary btn-full mt8" onclick="scamIgnore()">Игнорировать</button>');
+}
+function scamAccept(){
+  var dub=curDub();if(getBalance(user.id,dub.id)<500)return alert("Недостаточно");
+  withdrawMoney(user.id,dub.id,500);
+  localStorage.setItem("scam_"+user.id,"1");
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-10)});
+  clM();
+  // 30% шанс что мошенник спалится
+  if(Math.random()<0.3){
+    pushSms(user.id,"🚨 ФСБ отследило мошенника! Ваш перевод возвращён +500 Ð бонус");
+    giveDenoms(user.id,dub.id,1000);
+    showNotif("🕵️ Поймали!","Мошенник спалился. Возврат 500 Ð + бонус 500 Ð");
+  }else{
+    pushSms(user.id,"💸 Вы перевели 500 Ð. Долг НЕ списан. Вас обманули!");
+    alert("Деньги ушли... Долг остался. Вас обманули!");
+  }
+  render();
+}
+function scamReport(){
+  localStorage.setItem("scam_"+user.id,"1");
+  db.add("wanted",{uid:9999,rsn:"Мошенничество (заявление @"+user.nick+")",act:true,by:user.id,d:Date.now()});
+  db.upd("users",user.id,{rep:Math.min(200,(user.rep||10000)+5)});
+  clM();
+  pushSms(user.id,"🚨 Заявление принято! Мошенник в розыске. +5 к репутации");
+  alert("Молодец! Мошенник в розыске.");
+  render();
+}
+function scamIgnore(){localStorage.setItem("scam_"+user.id,"1");clM();render()}
+
+/* ==================== ШАПКА / ТАБЫ ==================== */
+function hdr(){
+  var w=getWeather();
+  var p=db.one("passports","userId",user.id);
+  // Показываем погоду только один раз за сессию
+  var weatherHtml = "";
+  if(!weatherShown && w){
+    weatherHtml = '<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">'+w.cond+" "+w.temp+"°C</span>";
+    weatherShown = true;
+  }
+  return '<div class="header"><div class="header-title">🏦 DubleCass V20</div><div class="header-sub">@'+user.nick+(isW(user.id)?' <span class="wanted">🚨 РОЗЫСК</span>':'')+(user.adm?' <span class="badge badge-admin">👑</span>':'')+'</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+weatherHtml+'<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">⭐ '+(user.rep||10000)+'</span><button class="btn btn-dark btn-sm" onclick="backToSlots()">🔄</button></div></div>';
+}
+function tabsH(){
+  var t=[["pass","🪪","Паспорт"],["home","🏠","Главная"],["fact","🏛️","Орг-ции"],["card","💳","Карта"],["bank","🏦","Банк"],["stock","📈","Биржа"],["casino","🎰","Казино"],["chat","💬","Чат"],["people","👥","Люди"],["prof","👤","Профиль"]];
+  if(user.adm)t.push(["adm","⚙️","Админ"]);
+  var h='<div class="tabs">';
+  for(var i=0;i<t.length;i++)h+='<button class="tab'+(tab===t[i][0]?" active":"")+'" onclick="go(\''+t[i][0]+'\')"><span class="tab-icon">'+t[i][1]+'</span>'+t[i][2]+'</button>';
+  return h+'</div>';
+}
+function go(t){tab=t;render()}
+
+/* ==================== ГЛАВНАЯ ==================== */
+function homeP(){
+  var cards=db.by("cards","userId",user.id);
+  var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;
+  var unc=db.by("smsInbox","uid",user.id).filter(function(x){return!x.read}).length;
+  var h='';
+  if(unc)h+='<div class="card" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:2px solid #6366f1"><b>📨 '+unc+' уведомлений</b><button class="btn btn-primary btn-sm mt8" onclick="openSmsInbox()">Открыть</button></div>';
+  if(isW(user.id))h+='<div class="card" style="background:#fef2f2;border:2px solid #dc2626"><b style="color:#dc2626">🚨 ВЫ В РОЗЫСКЕ!</b></div>';
+  
+  // Планшет
+  h+='<div class="card" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;text-align:center"><div style="font-size:48px">📱</div><div style="font-size:18px;font-weight:700;margin:6px 0">ПЛАНШЕТ</div><div style="font-size:12px;opacity:.9;margin-bottom:10px">Цифровая ОС Республики</div><button class="btn btn-full" style="background:#fff;color:#6366f1;font-weight:700" onclick="openTablet()">🚀 Открыть</button></div>';
+  
+  // Карта
+  if(cards.length){
+    var c=cards[0];var bank=db.get("factions",c.bankId);
+    h+='<div class="bank-card blue"><div style="position:absolute;top:20px;right:20px;font-size:10px;opacity:.7">'+(bank?bank.name:"")+'</div><div class="bank-card-chip"></div><div class="bank-card-number">'+U.fCard(c.num)+'</div><div class="bank-card-name">'+user.nick+'</div><div class="bank-card-balance"><div class="bank-card-balance-val">'+U.money(bal)+' Ð</div></div></div>';
+  }else{
+    h+='<div class="card"><div class="card-head">💳 Нет карты</div><button class="btn btn-primary btn-full" onclick="reqCard()">📝 Заказать карту</button></div>';
+  }
+  
+  // Бизнес
+  h+='<div class="card"><div class="card-head">🏪 Свой бизнес</div><p style="font-size:12px;color:#64748b;margin-bottom:8px">Регистрация: 2000 €</p><button class="btn btn-warning btn-full" onclick="createBusiness()">🏪 Создать бизнес</button></div>';
+  
+  // Действия
+  h+='<div class="card"><div class="card-head">⚡ Быстрые действия</div><div class="grid-2"><button class="btn btn-primary btn-sm" onclick="transfer()">💸 Перевод</button><button class="btn btn-warning btn-sm" onclick="usePromo()">🎁 Промокод</button><button class="btn btn-cyan btn-sm" onclick="exchMoney()">💱 Обмен</button><button class="btn btn-purple btn-sm" onclick="go(\'stock\')">📈 Биржа</button></div></div>';
+  return h;
+}
+
+/* ==================== ПАСПОРТ ==================== */
+function passP(){
+  var ps=db.by("passports","userId",user.id).filter(function(p){return p.approved});
+  var h="";
+  if(ps.length){
+    ps.forEach(function(p){
+      h+='<div class="passport-card"><div class="passport-header">'+COUNTRY.name+'</div><div class="passport-body"><div class="passport-title">ПАСПОРТ</div><div class="passport-field"><div class="passport-field-label">Имя</div><div class="passport-field-value">'+(p.name||"—")+'</div></div><div class="passport-field"><div class="passport-field-label">Фамилия</div><div class="passport-field-value">'+(p.sur||"Дубли")+'</div></div><div class="passport-field"><div class="passport-field-label">Дата рождения</div><div class="passport-field-value">'+(p.birth||"—")+'</div></div><div class="passport-mrz">P&lt;DUB'+(p.sur||"ДУБЛИ").toUpperCase()+'&lt;&lt;&lt;&lt;&lt;&lt;</div></div></div>';
+      h+='<button class="btn btn-primary btn-full" onclick="passQR('+p.id+')">📱 QR паспорта</button>';
+    });
+  }else{
+    h+='<button class="btn btn-primary btn-full" onclick="reqPassport()">📝 Подать заявление</button>';
+  }
+  return h;
+}
+function reqPassport(){
+  md("📝 Заявление на паспорт",'<label class="label">Имя *</label><input id="pN" class="input" placeholder="Иван"><label class="label">Фамилия (необязательно)</label><input id="pS" class="input" placeholder="По умолчанию: Дубли"><label class="label">Дата рождения *</label><input type="date" id="pB" class="input"><label class="label">Пол</label><select id="pG" class="input"><option value="М">Мужской</option><option value="Ж">Женский</option></select><button class="btn btn-success btn-full" onclick="sendPassReq()">📨 Отправить</button>');
+}
+function sendPassReq(){
+  var n=document.getElementById("pN").value.trim();
+  var s=document.getElementById("pS").value.trim();
+  var b=document.getElementById("pB").value;
+  if(!n)return alert("Имя обязательно");
+  if(!b)return alert("Дата рождения обязательна");
+  if(!s){
+    var taken=db.all("passports").some(function(p){return p.sur==="Дубли"});
+    if(taken){
+      var sug="Дубли1",cnt=1;
+      while(db.all("passports").some(function(p){return p.sur===sug})){cnt++;sug="Дубли"+cnt}
+      var choice=prompt("Фамилия «Дубли» занята. Предлагаем: "+sug+"\n\nОК — взять "+sug+"\nИли напишите свою:");
+      s=(choice&&choice.trim())?choice.trim():sug;
+    }else{s="Дубли"}
+  }
+  db.add("passports",{userId:user.id,ph:"👤",name:n,sur:s,birth:b,gen:document.getElementById("pG").value,ser:U.rnd(10,99)+" "+U.rnd(10,99),numId:U.gId(),issuer:"МВД Дублики",approved:true});
+  clM();alert("Паспорт выдан!");render();
+}
+function passQR(id){
+  var qr=C.enc(JSON.stringify({t:"P",id:id}));
+  md("📱 QR паспорта",'<div class="qr-box"><div id="qrc"></div></div>');
+  setTimeout(function(){new QRCode(document.getElementById("qrc"),{text:qr,width:180,height:180})},100);
+}
+
+/* ==================== КАРТЫ ==================== */
+function cardP(){
+  var cards=db.by("cards","userId",user.id);
+  if(!cards.length)return'<div class="empty"><div class="empty-icon">💳</div><button class="btn btn-primary mt8" onclick="reqCard()">📝 Заказать</button></div>';
+  var h="";
+  cards.forEach(function(c){
+    h+='<div class="bank-card blue"><div class="bank-card-chip"></div><div class="bank-card-number">'+U.fCard(c.num)+'</div><div class="bank-card-name">'+user.nick+'</div></div>';
+    h+='<div class="grid-2"><button class="btn btn-primary btn-sm" onclick="cdQR('+c.id+')">📱 QR</button><button class="btn btn-purple btn-sm" onclick="shPin('+c.id+')">🔐 PIN</button></div>';
+  });
+  return h;
+}
+function reqCard(){
+  var banks=getBanks();if(!banks.length)return alert("Нет банков");
+  var h='<select id="reqB" class="input">';banks.forEach(function(b){h+='<option value="'+b.id+'">'+b.icon+' '+b.name+'</option>'});
+  h+='</select><label class="label">PIN (4 цифры)</label><input id="reqPin" class="input" maxlength="4"><button class="btn btn-success btn-full" onclick="sendCardReq()">📨 Отправить</button>';
+  md("📝 Заявка на карту",h);
+}
+function sendCardReq(){
+  var bid=parseInt(document.getElementById("reqB").value);
+  var pin=document.getElementById("reqPin").value;
+  if(!/^\d{4}$/.test(pin))return alert("PIN 4 цифры");
+  db.add("cards",{userId:user.id,bankId:bid,num:U.gCard(),pin:pin,color:"blue"});
+  clM();alert("Карта выпущена!");render();
+}
+function cdQR(id){
+  var qr=C.enc(JSON.stringify({t:"CD",id:id}));
+  md("📱 QR карты",'<div class="qr-box"><div id="qrc"></div></div>');
+  setTimeout(function(){new QRCode(document.getElementById("qrc"),{text:qr,width:180,height:180})},100);
+}
+function shPin(id){var c=db.get("cards",id);md("🔐 PIN",'<div style="text-align:center;font-size:48px;font-weight:700;letter-spacing:12px;padding:30px;background:#f9fafb;border-radius:12px">'+c.pin+'</div>')}
+
+/* ==================== ОРГАНИЗАЦИИ ==================== */
+function factP(){
+  var fs=db.all("factions");var h='';
+  if(user.adm)h+='<button class="btn btn-purple btn-full" onclick="newF()">🏛️ Создать организацию</button>';
+  var banks=fs.filter(function(f){return f.central||f.cat==="bank"});
+  var mvds=fs.filter(function(f){return f.isMVD||f.cat==="mvd"});
+  var fsbs=fs.filter(function(f){return f.isFSB||f.cat==="fsb"});
+  var prvs=fs.filter(function(f){return f.isPRVO||f.cat==="pravo"});
+  var shops=fs.filter(function(f){return f.isBusiness});
+  
+  if(banks.length){h+='<div class="card"><div class="card-head" style="color:#fbbf24">🏦 Банки</div>';banks.forEach(function(f){h+='<div class="list-item" onclick="vF('+f.id+')"><div class="list-item-icon">'+(f.central?"🏛️":"🏦")+'</div><div class="list-item-content"><div class="list-item-title">'+f.name+(f.central?' ⭐':'')+'</div><div class="list-item-sub">Казна: '+U.money(f.treasury||0)+' Ð</div></div></div>'});h+='</div>'}
+  if(mvds.length){h+='<div class="card"><div class="card-head" style="color:#dc2626">🛡️ МВД</div>';mvds.forEach(function(f){h+='<div class="list-item" onclick="vF('+f.id+')"><div class="list-item-icon">🛡️</div><div class="list-item-content"><div class="list-item-title">'+f.name+'</div></div></div>'});h+='</div>'}
+  if(fsbs.length){h+='<div class="card"><div class="card-head" style="color:#1e293b">🕵️ ФСБ</div>';fsbs.forEach(function(f){h+='<div class="list-item" onclick="vF('+f.id+')"><div class="list-item-icon">🕵️</div><div class="list-item-content"><div class="list-item-title">'+f.name+'</div></div></div>'});h+='</div>'}
+  if(prvs.length){h+='<div class="card"><div class="card-head" style="color:#0d9488">⚖️ Правительство</div>';prvs.forEach(function(f){h+='<div class="list-item" onclick="vF('+f.id+')"><div class="list-item-icon">⚖️</div><div class="list-item-content"><div class="list-item-title">'+f.name+'</div><div class="list-item-sub">Казна: '+U.money(f.treasury||0)+' Ð</div></div></div>'});h+='</div>'}
+  if(shops.length){h+='<div class="card"><div class="card-head" style="color:#ea580c">🏪 Бизнесы</div>';shops.forEach(function(f){h+='<div class="list-item" onclick="vF('+f.id+')"><div class="list-item-icon">🏪</div><div class="list-item-content"><div class="list-item-title">'+f.name+'</div></div></div>'});h+='</div>'}
+  return h;
+}
+function newF(){md("🏛️ Создать",'<input id="fN" class="input" placeholder="Название"><input id="fI" class="input" value="🏢" maxlength="2"><button class="btn btn-success btn-full" onclick="saveNewF()">Создать</button>')}
+function saveNewF(){var nm=document.getElementById("fN").value.trim();if(!nm)return;var fid=db.add("factions",{name:nm,icon:document.getElementById("fI").value,cat:"other",treasury:0,admins:[user.id]});var rid=db.add("ranks",{fid:fid,name:"Директор",lvl:100,perms:["ADD","REM","PROM"]});db.add("members",{fid:fid,userId:user.id,rid:rid});clM();render()}
+function vF(fid){
+  var f=db.get("factions",fid);if(!f)return;
+  var ms=db.by("members","fid",fid);
+  var isMem=ms.some(function(x){return x.userId===user.id});
+  var hero='<div class="faction-hero"><h2>'+(f.icon||"🏢")+" "+f.name+'</h2><p>Казна: '+U.money(f.treasury||0)+' Ð · Сотрудников: '+ms.length+'</p></div>';
+  var h='';
+  
+  // Спецпанели
+  if((f.isMVD||f.cat==="mvd")&&isMem){
+    h+='<div class="card"><div class="card-head">🛡️ Панель МВД</div>';
+    h+='<button class="btn btn-dark btn-full" onclick="mvdUK('+fid+')">📕 УК</button>';
+    h+='<button class="btn btn-secondary btn-full mt8" onclick="mvdKoAP('+fid+')">📗 КоАП</button>';
+    h+='<button class="btn btn-danger btn-full mt8" onclick="mvdWanted()">🚨 Розыск</button>';
+    h+='<button class="btn btn-cyan btn-full mt8" onclick="mvdKPK()">📟 КПК</button></div>';
+  }
+  if((f.isFSB||f.cat==="fsb")&&canUseFSB()){
+    h+='<div class="card"><div class="card-head">🕵️ Панель ФСБ</div>';
+    h+='<button class="btn btn-dark btn-full" onclick="fsbChats()">📨 Читать чаты</button>';
+    h+='<button class="btn btn-warning btn-full mt8" onclick="fsbGeoTrace()">📍 СЛЕЖКА (геолокация)</button>';
+    h+='<button class="btn btn-danger btn-full mt8" onclick="fsbBan()">🚫 Бан</button></div>';
+  }
+  
+  // Сотрудники
+  h+='<div class="section">👥 Сотрудники</div>';
+  ms.forEach(function(m){
+    var u=db.get("users",m.userId);var r=db.get("ranks",m.rid);
+    h+='<div class="list-item" onclick="vM('+fid+','+m.userId+')"><div class="list-item-content"><div class="list-item-title">@'+(u?u.nick:"?")+'</div><div class="list-item-sub">'+(r?r.name:"")+'</div></div></div>';
+  });
+  if(!isMem)h+='<button class="btn btn-primary btn-full mt8" onclick="applyToFaction('+fid+')">✅ Вступить</button>';
+  if(hasP(fid,"ADD"))h+='<button class="btn btn-success btn-full mt8" onclick="addM('+fid+')">➕ Принять</button>';
+  md(f.name,hero+h,true);
+}
+function applyToFaction(fid){if(db.by("members","userId",user.id).some(function(m){return m.fid===fid}))return alert("Уже в организации");db.add("leaderApps",{fid:fid,uid:user.id,st:"pending",t:Date.now()});alert("Заявка отправлена")}
+function addM(fid){var users=db.all("users").filter(function(u){return!db.by("members","userId",u.id).find(function(m){return m.fid===fid})});var ranks=db.by("ranks","fid",fid);if(!users.length)return alert("Нет");var uo="",ro="";users.forEach(function(u){uo+='<option value="'+u.id+'">@'+u.nick+'</option>'});ranks.forEach(function(r){ro+='<option value="'+r.id+'">'+r.name+'</option>'});md("➕ Принять",'<select id="mU" class="input">'+uo+'</select><select id="mR" class="input">'+ro+'</select><button class="btn btn-success btn-full" onclick="saveM('+fid+')">Принять</button>')}
+function saveM(fid){var uid=parseInt(document.getElementById("mU").value);var rid=parseInt(document.getElementById("mR").value);db.add("members",{fid:fid,userId:uid,rid:rid});clM();vF(fid)}
+function vM(fid,uid){var m=db.by("members","userId",uid).find(function(x){return x.fid===fid});if(!m)return;var u=db.get("users",uid);var r=db.get("ranks",m.rid);md("👤 @"+(u?u.nick:""),'<div class="info-row"><span>Должность</span><span>'+(r?r.name:"")+'</span></div>'+(hasP(fid,"REM")&&uid!==user.id?'<button class="btn btn-danger btn-full mt8" onclick="fireM('+fid+','+uid+')">🚫 Уволить</button>':''))}
+function fireM(fid,uid){var m=db.by("members","userId",uid).find(function(x){return x.fid===fid});db.del("members",m.id);clM();vF(fid)}
+
+/* ==================== БАНК ==================== */
+function bankP(){
+  var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;var banks=getBanks();
+  var h='<div class="card" style="text-align:center"><div style="font-size:28px;font-weight:700">'+U.money(bal)+' Ð</div><div style="color:#6b7280;font-size:12px">Ваш баланс</div></div>';
+  h+='<div class="card"><div class="card-head">🏦 Банки</div>';banks.forEach(function(b){h+='<div class="list-item" onclick="vF('+b.id+')"><div class="list-item-icon">'+(b.central?"🏛️":"🏦")+'</div><div class="list-item-content"><div class="list-item-title">'+b.name+'</div><div class="list-item-sub">Казна: '+U.money(b.treasury||0)+' Ð</div></div></div>'});h+='</div>';
+  h+='<div class="card"><div class="card-head">💰 Операции</div><div class="grid-2"><button class="btn btn-success btn-sm" onclick="transfer()">💸 Перевод</button><button class="btn btn-warning btn-sm" onclick="reqCredit()">💳 Кредит</button></div><div class="grid-2 mt8"><button class="btn btn-cyan btn-sm" onclick="openDeposit()">📈 Вклад</button><button class="btn btn-purple btn-sm" onclick="exchMoney()">💱 Обмен</button></div></div>';
+  return h;
+}
+function transfer(){var users=db.all("users").filter(function(u){return u.id!==user.id});var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;var h='<div class="info-row"><span>Баланс</span><span>'+U.money(bal)+' Ð</span></div><select id="trTo" class="input">';users.forEach(function(u){h+='<option value="'+u.id+'">@'+u.nick+'</option>'});h+='</select><input type="number" id="trAmt" class="input" placeholder="Сумма"><button class="btn btn-success btn-full" onclick="doTransfer()">💸 Перевести</button>';md("💸 Перевод",h)}
+function doTransfer(){var toId=parseInt(document.getElementById("trTo").value);var amt=parseFloat(document.getElementById("trAmt").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<amt||amt<=0)return alert("Недостаточно");withdrawMoney(user.id,dub.id,amt);giveDenoms(toId,dub.id,amt);clM();alert("Переведено!");render()}
+function exchMoney(){var dub=curDub();var eur=db.one("currencies","sym","€");var balD=getBalance(user.id,dub.id);var balE=getBalance(user.id,eur.id);md("💱 Обмен",'<div class="info-row"><span>Дубли</span><span>'+U.money(balD)+' Ð</span></div><div class="info-row"><span>Евро</span><span>'+U.money(balE)+' €</span></div><div class="info-row"><span>Курс</span><span>1€ = '+getRate()+' Ð</span></div><input type="number" id="exD" class="input" placeholder="Ð → €"><button class="btn btn-primary btn-full" onclick="doExch()">Обменять</button>')}
+function doExch(){var amt=parseFloat(document.getElementById("exD").value)||0;var dub=curDub();var eur=db.one("currencies","sym","€");if(getBalance(user.id,dub.id)<amt||amt<=0)return alert("Недостаточно");withdrawMoney(user.id,dub.id,amt);giveDenoms(user.id,eur.id,amt/getRate());clM();alert("Обменяно!");render()}
+function reqCredit(){var banks=getBanks();var h='<select id="crBank" class="input">';banks.forEach(function(b){h+='<option value="'+b.id+'">'+b.name+'</option>'});h+='</select><input type="number" id="crAmt" class="input" placeholder="Сумма"><button class="btn btn-success btn-full" onclick="sendCrReq()">📨 Отправить</button>';md("💳 Кредит",h)}
+function sendCrReq(){var bid=parseInt(document.getElementById("crBank").value);var amt=parseFloat(document.getElementById("crAmt").value);if(!amt)return;var dub=curDub();giveDenoms(user.id,dub.id,amt);db.add("credits",{userId:user.id,bankId:bid,amt:amt*1.1,paid:0,st:"active"});clM();alert("Кредит выдан! Возврат: "+U.money(amt*1.1)+" Ð");render()}
+function openDeposit(){var banks=getBanks();var h='<select id="depBank" class="input">';banks.forEach(function(b){h+='<option value="'+b.id+'">'+b.name+' (5%/мес)</option>'});h+='</select><input type="number" id="depAmt" class="input" placeholder="Сумма"><button class="btn btn-cyan btn-full" onclick="createDeposit()">📈 Открыть</button>';md("📈 Вклад",h)}
+function createDeposit(){var bid=parseInt(document.getElementById("depBank").value);var amt=parseFloat(document.getElementById("depAmt").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<amt)return alert("Недостаточно");withdrawMoney(user.id,dub.id,amt);db.add("deposits",{userId:user.id,bankId:bid,amt:amt,pct:5,st:"active",t:Date.now()});clM();alert("Вклад открыт!");render()}
+
+/* ==================== БИРЖА ==================== */
+var STOCKS=[{n:"Газпром",s:"GAZP",p:168},{n:"Сбер",s:"SBER",p:267},{n:"Лукойл",s:"LKOH",p:7200},{n:"Яндекс",s:"YNDX",p:2800},{n:"МТС",s:"MTSS",p:285}];
+var CRYPTO=[{n:"Bitcoin",s:"BTC",p:97000},{n:"Ethereum",s:"ETH",p:3600},{n:"BNB",s:"BNB",p:620},{n:"Solana",s:"SOL",p:195},{n:"Toncoin",s:"TON",p:5.8}];
+function initStocks(){if(db.cnt("companies")>0)return;STOCKS.forEach(function(s){db.add("companies",{name:s.n,sym:s.s,price:s.p,change:0,crypto:false})});CRYPTO.forEach(function(s){db.add("companies",{name:s.n,sym:s.s,price:s.p,change:0,crypto:true})})}
+function updateStocks(){db.all("companies").forEach(function(c){var vol=c.crypto?U.rnd(-18,18):U.rnd(-8,8);var np=Math.max(0.01,c.price*(1+vol/100));db.upd("companies",c.id,{price:np,change:vol})})}
+function stockP(){var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;var stocks=db.all("companies").filter(function(c){return!c.crypto});var crypto=db.all("companies").filter(function(c){return c.crypto});var h='<div class="card" style="text-align:center"><div style="font-size:24px;font-weight:700">'+U.money(bal)+' Ð</div></div>';h+='<div class="grid-2"><button class="btn btn-primary btn-sm" onclick="allStocks()">📊 Акции</button><button class="btn btn-warning btn-sm" onclick="allCrypto()">🪙 Крипто</button></div>';stocks.slice(0,5).forEach(function(c){h+='<div class="list-item" onclick="buyStock('+c.id+')"><div class="list-item-icon">📈</div><div class="list-item-content"><div class="list-item-title">'+c.sym+'</div><div class="list-item-sub">'+U.money(c.price)+' Ð</div></div><span style="color:'+(c.change>=0?"#22c55e":"#ef4444")+'">'+(c.change>=0?"+":"")+c.change+'%</span></div>'});return h}
+function allStocks(){var stocks=db.all("companies").filter(function(c){return!c.crypto});var h="";stocks.forEach(function(c){h+='<div class="list-item" onclick="clM();buyStock('+c.id+')"><div class="list-item-icon">📈</div><div class="list-item-content"><div class="list-item-title">'+c.sym+' · '+c.name+'</div><div class="list-item-sub">'+U.money(c.price)+' Ð</div></div></div>'});md("📊 Акции",h)}
+function allCrypto(){var crypto=db.all("companies").filter(function(c){return c.crypto});var h="";crypto.forEach(function(c){h+='<div class="list-item" onclick="clM();buyStock('+c.id+')"><div class="list-item-icon">🪙</div><div class="list-item-content"><div class="list-item-title">'+c.sym+'</div><div class="list-item-sub">'+U.money(c.price)+' Ð</div></div></div>'});md("🪙 Крипто",h)}
+function buyStock(cid){var c=db.get("companies",cid);md("Купить "+c.sym,'<div class="info-row"><span>Цена</span><span>'+U.money(c.price)+' Ð</span></div><input type="number" id="buyQty" class="input" placeholder="Кол-во"><button class="btn btn-success btn-full mt8" onclick="doBuyStock('+cid+')">💰 Купить</button>')}
+function doBuyStock(cid){var c=db.get("companies",cid);var qty=parseFloat(document.getElementById("buyQty").value)||0;var total=c.price*qty;var dub=curDub();if(getBalance(user.id,dub.id)<total)return alert("Недостаточно");withdrawMoney(user.id,dub.id,total);var ex=db.by("userStocks","uid",user.id).find(function(s){return s.cid===cid});if(ex)db.upd("userStocks",ex.id,{qty:ex.qty+qty});else db.add("userStocks",{uid:user.id,cid:cid,qty:qty});clM();alert("Куплено!");render()}
+
+/* ==================== КАЗИНО ==================== */
+function casinoP(){var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;return'<div class="card" style="text-align:center;background:linear-gradient(135deg,#1e1b4b,#312e81);color:#e0e7ff"><div style="font-size:24px;font-weight:700">'+U.money(bal)+' Ð</div></div><div class="grid-2"><div class="card casino-tile" onclick="slotsGame()"><div style="font-size:40px;text-align:center">🎰</div><div style="text-align:center;font-weight:700">Слоты</div></div><div class="card casino-tile" onclick="rouletteGame()"><div style="font-size:40px;text-align:center">🎡</div><div style="text-align:center;font-weight:700">Рулетка</div></div><div class="card casino-tile" onclick="diceGame()"><div style="font-size:40px;text-align:center">🎲</div><div style="text-align:center;font-weight:700">Кости</div></div><div class="card casino-tile" onclick="coinGame()"><div style="font-size:40px;text-align:center">🪙</div><div style="text-align:center;font-weight:700">Монетка</div></div><div class="card casino-tile" onclick="crashGame()"><div style="font-size:40px;text-align:center">🚀</div><div style="text-align:center;font-weight:700">Краш</div></div><div class="card casino-tile" onclick="minesGame()"><div style="font-size:40px;text-align:center">💣</div><div style="text-align:center;font-weight:700">Мины</div></div></div>'}
+function slotsGame(){md("🎰 Слоты",'<div style="text-align:center;margin:20px 0;font-size:40px"><span id="s1">🍒</span> <span id="s2">🍋</span> <span id="s3">🍊</span></div><div id="slotRes" style="text-align:center;font-weight:700"></div><input type="number" id="slotBet" class="input" value="100"><button class="btn btn-pink btn-full" onclick="spinSlots()">🎰 Крутить</button>')}
+function spinSlots(){var bet=parseInt(document.getElementById("slotBet").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<bet)return alert("Недостаточно");withdrawMoney(user.id,dub.id,bet);var sym=["🍒","🍋","🍊","🍇","⭐","7️⃣","💎"];var r=[U.rnd(0,6),U.rnd(0,6),U.rnd(0,6)];document.getElementById("s1").textContent=sym[r[0]];document.getElementById("s2").textContent=sym[r[1]];document.getElementById("s3").textContent=sym[r[2]];var win=0;if(r[0]===r[1]&&r[1]===r[2])win=bet*10;else if(r[0]===r[1]||r[1]===r[2])win=bet*2;if(win>0)giveDenoms(user.id,dub.id,win);document.getElementById("slotRes").innerHTML=win>0?'<span style="color:#22c55e">+'+U.money(win)+' Ð!</span>':'<span style="color:#ef4444">Проигрыш</span>'}
+function rouletteGame(){md("🎡 Рулетка",'<div id="rouletteNum" style="text-align:center;font-size:48px">🎯</div><div id="rouletteRes" style="text-align:center"></div><input type="number" id="rouletteBet" class="input" value="100"><div class="grid-2"><button class="btn btn-danger" onclick="spinRoulette(\'red\')">🔴</button><button class="btn btn-dark" onclick="spinRoulette(\'black\')">⚫</button></div>')}
+function spinRoulette(color){var bet=parseInt(document.getElementById("rouletteBet").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<bet)return alert("Недостаточно");withdrawMoney(user.id,dub.id,bet);var result=U.rnd(0,36);var resColor=result===0?"green":(result%2===0?"red":"black");document.getElementById("rouletteNum").textContent=result;var win=color===resColor?bet*2:0;if(win>0)giveDenoms(user.id,dub.id,win);document.getElementById("rouletteRes").innerHTML=win>0?'<span style="color:#22c55e">+'+U.money(win)+' Ð!</span>':'<span style="color:#ef4444">Выпало '+result+'</span>'}
+function diceGame(){md("🎲 Кости",'<div style="text-align:center;font-size:50px" id="diceRes">🎲🎲</div><input type="number" id="diceBet" class="input" value="100"><div class="grid-2"><button class="btn btn-success" onclick="rollDice(\'high\')">⬆️ >7</button><button class="btn btn-danger" onclick="rollDice(\'low\')">⬇️ <7</button></div>')}
+function rollDice(choice){var bet=parseInt(document.getElementById("diceBet").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<bet)return alert("Недостаточно");withdrawMoney(user.id,dub.id,bet);var d1=U.rnd(1,6),d2=U.rnd(1,6);var sum=d1+d2;var win=0;if((choice==="high"&&sum>7)||(choice==="low"&&sum<7))win=bet*2;if(win>0)giveDenoms(user.id,dub.id,win);document.getElementById("diceRes").textContent=d1+" + "+d2+" = "+sum}
+function coinGame(){md("🪙 Монетка",'<div id="coinIcon" style="text-align:center;font-size:80px">🪙</div><div id="coinRes" style="text-align:center"></div><input type="number" id="coinBet" class="input" value="100"><div class="grid-2"><button class="btn btn-warning" onclick="flipCoin(\'heads\')">👑 Орёл</button><button class="btn btn-secondary" onclick="flipCoin(\'tails\')">🦅 Решка</button></div>')}
+function flipCoin(choice){var bet=parseInt(document.getElementById("coinBet").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<bet)return alert("Недостаточно");withdrawMoney(user.id,dub.id,bet);var result=Math.random()<0.5?"heads":"tails";document.getElementById("coinIcon").textContent=result==="heads"?"👑":"🦅";var win=choice===result?bet*2:0;if(win>0)giveDenoms(user.id,dub.id,win);document.getElementById("coinRes").innerHTML=win>0?'<span style="color:#22c55e">+'+U.money(win)+' Ð!</span>':'<span style="color:#ef4444">Проигрыш</span>'}
+var crashData={running:false,mult:1,bet:0,iv:null};
+function crashGame(){md("🚀 Краш",'<div id="crashMult" style="text-align:center;font-size:48px;font-weight:700;color:#22c55e">1.00x</div><div id="crashRes" style="text-align:center"></div><input type="number" id="crashBet" class="input" value="100"><div id="crashBtns"><button class="btn btn-success btn-full" onclick="startCrash()">🚀 Старт</button></div>')}
+function startCrash(){if(crashData.running)return;var bet=parseInt(document.getElementById("crashBet").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<bet)return alert("Недостаточно");withdrawMoney(user.id,dub.id,bet);crashData.bet=bet;crashData.mult=1;crashData.running=true;document.getElementById("crashBtns").innerHTML='<button class="btn btn-danger btn-full" onclick="cashoutCrash()">💰 Забрать</button>';var crash=1+Math.random()*10;crashData.iv=setInterval(function(){crashData.mult+=0.05;document.getElementById("crashMult").textContent=crashData.mult.toFixed(2)+"x";if(crashData.mult>=crash){clearInterval(crashData.iv);crashData.running=false;document.getElementById("crashMult").style.color="#ef4444";document.getElementById("crashRes").innerHTML='<span style="color:#ef4444">💥 Краш!</span>';document.getElementById("crashBtns").innerHTML='<button class="btn btn-success btn-full" onclick="startCrash()">🚀 Ещё</button>'}},100)}
+function cashoutCrash(){if(!crashData.running)return;clearInterval(crashData.iv);crashData.running=false;var win=Math.floor(crashData.bet*crashData.mult);var dub=curDub();giveDenoms(user.id,dub.id,win);document.getElementById("crashRes").innerHTML='<span style="color:#22c55e">+'+U.money(win)+' Ð!</span>';document.getElementById("crashBtns").innerHTML='<button class="btn btn-success btn-full" onclick="startCrash()">🚀 Ещё</button>'}
+var minesData={grid:[],bet:0,mult:1,revealed:0};
+function minesGame(){md("💣 Мины",'<div id="minesGrid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"></div><div id="minesRes" style="text-align:center"></div><input type="number" id="minesBet" class="input" value="100"><button class="btn btn-success btn-full" onclick="startMines()">💣 Начать</button>')}
+function startMines(){var bet=parseInt(document.getElementById("minesBet").value)||0;var dub=curDub();if(getBalance(user.id,dub.id)<bet)return alert("Недостаточно");withdrawMoney(user.id,dub.id,bet);minesData.bet=bet;minesData.mult=1;minesData.revealed=0;minesData.grid=[];for(var i=0;i<25;i++)minesData.grid.push(i<5?"bomb":"safe");minesData.grid.sort(function(){return Math.random()-0.5});var h="";for(var i=0;i<25;i++)h+='<div style="aspect-ratio:1;background:#e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer" onclick="clickMine('+i+')">❓</div>';document.getElementById("minesGrid").innerHTML=h;document.getElementById("minesRes").innerHTML='<button class="btn btn-success btn-sm" onclick="cashoutMines()">Забрать</button>'}
+function clickMine(i){if(!minesData.grid.length)return;var cells=document.querySelectorAll("#minesGrid > div");if(minesData.grid[i]==="bomb"){cells[i].style.background="#ef4444";cells[i].textContent="💣";document.getElementById("minesRes").innerHTML='<span style="color:#ef4444">💥 Проигрыш</span>';minesData.grid=[]}else{cells[i].style.background="#22c55e";cells[i].textContent="💎";minesData.revealed++;minesData.mult+=0.25}}
+function cashoutMines(){if(!minesData.grid.length||minesData.revealed===0)return;var win=Math.floor(minesData.bet*minesData.mult);var dub=curDub();giveDenoms(user.id,dub.id,win);document.getElementById("minesRes").innerHTML='<span style="color:#22c55e">+'+U.money(win)+' Ð!</span>';minesData.grid=[]}
+
+/* ==================== ЧАТ ==================== */
+function chatP(){var us=db.all("users").filter(function(u){return u.id!==user.id});var h='<div class="card"><div class="card-head">👥 Личные чаты</div>';us.forEach(function(u){h+='<div class="list-item" onclick="openChat('+u.id+')"><div class="list-item-icon">'+(u.ph||"👤")+'</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div></div></div>'});h+='</div>';h+='<div class="card"><div class="card-head">🤖 ДублиAI</div><div class="list-item" onclick="openAI()"><div class="list-item-icon">🧠</div><div class="list-item-content"><div class="list-item-title">Умный помощник</div></div></div></div>';return h}
+function openChat(uid){var u=db.get("users",uid);var msgs=db.all("messages").filter(function(m){return(m.from===user.id&&m.to===uid)||(m.from===uid&&m.to===user.id)});var h='<div style="height:400px;overflow-y:auto;margin-bottom:12px;padding:10px;background:#0a0a0f;border-radius:12px" id="chatBox">';msgs.slice(-50).forEach(function(m){var isMine=m.from===user.id;h+='<div style="display:flex;margin-bottom:8px;'+(isMine?"justify-content:flex-end":"")+'"><div style="max-width:75%;padding:10px 14px;border-radius:'+(isMine?"18px 18px 4px 18px":"18px 18px 18px 4px")+';background:'+(isMine?"#6366f1":"#1f2937")+';color:#fff;font-size:13px">'+m.txt+'</div></div>'});h+='</div><div style="display:flex;gap:8px"><input type="text" id="dmMsg" class="input" style="margin:0" placeholder="Сообщение..." onkeypress="if(event.key===\'Enter\')sendDM('+uid+')"><button class="btn btn-primary" onclick="sendDM('+uid+')">➤</button></div>';md("💬 @"+u.nick,h)}
+function sendDM(uid){var txt=document.getElementById("dmMsg").value.trim();if(!txt)return;db.add("messages",{from:user.id,to:uid,txt:txt,t:Date.now()});openChat(uid)}
+function openAI(){var msgs=db.by("aiMsgs","uid",user.id)||[];var h='<div style="height:400px;overflow-y:auto;margin-bottom:12px;padding:10px;background:#0a0a0f;border-radius:12px" id="aiBox">';if(!msgs.length)h+='<div style="max-width:75%;padding:10px 14px;border-radius:18px 18px 18px 4px;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;font-size:13px">👋 Привет! Я ДублиAI. Спроси о балансе, бирже, казино!</div>';msgs.forEach(function(m){var isMine=m.isUser;h+='<div style="display:flex;margin-bottom:8px;'+(isMine?"justify-content:flex-end":"")+'"><div style="max-width:75%;padding:10px 14px;border-radius:'+(isMine?"18px 18px 4px 18px":"18px 18px 18px 4px")+';background:'+(isMine?"#6366f1":"#10b981")+';color:#fff;font-size:13px;white-space:pre-wrap">'+m.txt+'</div></div>'});h+='</div><div style="display:flex;gap:8px"><input type="text" id="aiMsg" class="input" style="margin:0" placeholder="Спроси AI..." onkeypress="if(event.key===\'Enter\')sendAI()"><button class="btn btn-cyan" onclick="sendAI()">➤</button></div>';md("🧠 ДублиAI",h)}
+function sendAI(){var txt=document.getElementById("aiMsg").value.trim();if(!txt)return;db.add("aiMsgs",{uid:user.id,txt:txt,isUser:true,t:Date.now()});document.getElementById("aiMsg").value="";openAI();setTimeout(function(){var reply=aiThink(txt);db.add("aiMsgs",{uid:user.id,txt:reply,isUser:false,t:Date.now()});openAI()},800)}
+function aiThink(q){var dub=curDub();var bal=getBalance(user.id,dub.id);q=q.toLowerCase();if(q.indexOf("привет")>=0)return"Привет! 👋 Чем помочь?";if(q.indexOf("баланс")>=0)return"💰 Баланс: "+U.money(bal)+" Ð";if(q.indexOf("курс")>=0)return"💱 Курс: 1€ = "+getRate()+" Ð";if(q.indexOf("казино")>=0)return"🎰 Игры: слоты, рулетка, кости, монетка, краш, мины";if(q.indexOf("спасибо")>=0)return"Всегда пожалуйста! 😊";return"🤔 Спроси о: баланс, курс, казино"}
+
+/* ==================== ЛЮДИ ==================== */
+function peopleP(){var us=db.all("users");var h='<div class="card"><div class="card-head">👥 Граждане</div>';us.forEach(function(u){h+='<div class="list-item" onclick="vPers('+u.id+')"><div class="list-item-icon">'+(u.ph||"👤")+'</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div><div class="list-item-sub">⭐ '+(u.rep||10000)+'</div></div></div>'});h+='</div>';return h}
+function vPers(uid){var u=db.get("users",uid);md("👤 @"+u.nick,'<div style="text-align:center;font-size:60px">'+(u.ph||"👤")+'</div><div style="text-align:center;font-weight:700">@'+u.nick+'</div><div class="info-row"><span>Репутация</span><span>⭐ '+(user.rep||10000)+'</span></div><div class="info-row"><span>Админ</span><span>'+(u.adm?"Да":"Нет")+'</span></div>'+(uid!==user.id?'<button class="btn btn-success btn-full mt8" onclick="clM();go(\'people\')">Назад</button>':''))}
+
+/* ==================== ПРОФИЛЬ + БЛАГОТВОРИТЕЛЬНОСТЬ / ПЕНСИЯ ==================== */
+function profP(){
+  var dub=curDub();
+  var bal=dub?getBalance(user.id,dub.id):0;
+  var achs=db.by("achievements","uid",user.id);
+  var h='<div class="card" style="text-align:center"><div style="font-size:60px">'+(user.ph||"👤")+'</div><div style="font-size:20px;font-weight:700">@'+user.nick+'</div><div style="font-size:11px;color:#64748b">ID: '+user.id+'</div><div style="margin-top:8px"><span class="stat-pill">⭐ '+(user.rep||10000)+'</span><span class="stat-pill">'+achs.length+' 🏆</span></div></div>';
+  h+='<div class="card"><div class="card-head">💰 Баланс</div><div class="info-row"><span>Дубли</span><span>'+U.money(bal)+' Ð</span></div></div>';
+  
+  // Благотворительность и Пенсия
+  h+='<div class="card"><div class="card-head">⭐ Рейтинг и Социалка</div>';
+  h+='<p style="font-size:12px;color:#64748b;margin-bottom:8px">Благотворительность: 10 000 Ð = +1 к рейтингу. Деньги идут в пенсионный фонд.</p>';
+  h+='<button class="btn btn-success btn-full" onclick="donateToPension()">❤️ Внести 10 000 Ð в пенсионный фонд</button>';
+  h+='<button class="btn btn-cyan btn-full mt8" onclick="checkPensionStatus()">📋 Статус пенсии</button>';
+  h+='</div>';
+  
+  h+='<div class="card"><div class="card-head">🏆 Достижения ('+achs.length+')</div>';
+  if(achs.length){achs.slice().reverse().forEach(function(a){h+='<div class="achievement"><div style="font-size:28px">'+a.icon+'</div><div style="flex:1"><div style="font-weight:700">'+a.name+'</div><div style="font-size:11px">'+a.desc+'</div></div></div>'})}else h+='<p style="color:#6b7280;font-size:12px">Пока нет достижений</p>';
+  h+='</div>';
+  h+='<button class="btn btn-warning btn-full" onclick="chPw()">🔐 Сменить пароль</button><button class="btn btn-danger btn-full mt8" onclick="out()">🚪 Выйти</button>';
+  return h
+}
+
+function donateToPension(){
+  var dub=curDub();
+  var bal=getBalance(user.id,dub.id);
+  if(bal<10000) return alert("Недостаточно средств (нужно 10 000 Ð)");
+  withdrawMoney(user.id,dub.id,10000);
+  setRep((user.rep||10000)+1);
+  // Добавляем в пенсионный фонд правительства
+  var prvo=db.all("factions").find(function(f){return f.isPRVO||f.cat==="pravo"});
+  if(prvo){
+    prvo.treasury=(prvo.treasury||0)+10000;
+    db.upd("factions",prvo.id,{treasury:prvo.treasury});
+  }
+  showNotif("❤️ Благотворительность","Вы внесли 10 000 Ð в пенсионный фонд! +1 к рейтингу");
+  render();
+}
+
+function checkPensionStatus(){
+  var prvo=db.all("factions").find(function(f){return f.isPRVO||f.cat==="pravo"});
+  var assigned=db.one("pensionAssign","userId",user.id);
+  var h='<div style="line-height:1.8">';
+  h+='<p><b>Пенсионный фонд:</b> '+(prvo?U.money(prvo.treasury||0)+' Ð':"Нет данных")+'</p>';
+  if(assigned){
+    h+='<p style="color:#22c55e"><b>✓ Пенсия назначена!</b></p>';
+    h+='<p>Сумма: '+U.money(assigned.amt||0)+' Ð в месяц</p>';
+  }else{
+    h+='<p style="color:#ef4444"><b>✗ Пенсия не назначена</b></p>';
+    h+='<p style="font-size:12px;color:#64748b">Пенсия назначается только Правительством (ПР-ВО). Обратитесь к лидеру Правительства.</p>';
+  }
+  h+='</div>';
+  md("📋 Статус пенсии",h,true);
+}
+function chPw(){md("🔐 Пароль",'<input type="password" id="oP" class="input" placeholder="Текущий"><input type="password" id="nP" class="input" placeholder="Новый"><button class="btn btn-success btn-full" onclick="savePw()">💾 Сохранить</button>')}
+function savePw(){var o=document.getElementById("oP").value,n=document.getElementById("nP").value;if(U.hash(o)!==user.pwh)return alert("Неверный");if(n.length<4)return alert("Мин 4");db.upd("users",user.id,{pwh:U.hash(n)});user=db.get("users",user.id);clM();alert("Изменён!")}
+function out(){user=null;localStorage.removeItem("u20");render()}
+function usePromo(){md("🎁 Промокод",'<input id="prCode" class="input" placeholder="ADMIN"><button class="btn btn-success btn-full" onclick="applyPromo()">✅</button>')}
+function applyPromo(){var code=document.getElementById("prCode").value.trim().toUpperCase();var p=db.one("promos","code",code);if(!p)return alert("Не найден");if(p.usedBy&&p.usedBy.indexOf(user.id)>=0)return alert("Уже использовали");if(p.kind==="grantAdmin"){db.upd("users",user.id,{adm:true});user=db.get("users",user.id);clM();alert("Админ активирован!");render();return}giveDenoms(user.id,p.curId,p.amt||0);p.usedBy=p.usedBy||[];p.usedBy.push(user.id);db.upd("promos",p.id,{used:p.used+1,usedBy:p.usedBy});clM();alert("+"+U.money(p.amt)+" Ð!");render()}
+
+/* ==================== АДМИНКА ==================== */
+function admP(){var h='<div class="card"><div class="card-head">👑 Админка</div>';h+='<button class="btn btn-purple btn-full" onclick="newF()">🏛️ Создать организацию</button>';h+='<button class="btn btn-success btn-full mt8" onclick="admGiveMoney()">💰 Выдать деньги</button>';h+='<button class="btn btn-cyan btn-full mt8" onclick="admCurrency()">💱 Курс €</button>';h+='<button class="btn btn-warning btn-full mt8" onclick="newPromo()">🎁 Промокод</button>';h+='<button class="btn btn-pink btn-full mt8" onclick="admLogs()">📜 Логи</button>';h+='<button class="btn btn-danger btn-full mt8" onclick="admReset()">🗑️ Сброс</button>';h+='</div>';return h}
+function admGiveMoney(){var users=db.all("users");var h='<select id="giveUid" class="input">';users.forEach(function(u){h+='<option value="'+u.id+'">@'+u.nick+'</option>'});h+='</select><input id="giveAmt" class="input" type="number" placeholder="Сумма"><button class="btn btn-success btn-full" onclick="doGiveMoney()">💰 Выдать</button>';md("💰 Выдать",h)}
+function doGiveMoney(){var uid=parseInt(document.getElementById("giveUid").value);var amt=parseFloat(document.getElementById("giveAmt").value)||0;var dub=curDub();giveDenoms(uid,dub.id,amt);clM();alert("Выдано!")}
+function admCurrency(){md("💱 Курс",'<input type="number" id="newRate" class="input" value="'+getRate()+'"><button class="btn btn-success btn-full" onclick="saveRate()">💾</button>')}
+function saveRate(){localStorage.setItem("eurRate",document.getElementById("newRate").value);clM();alert("Сохранено")}
+function newPromo(){md("🎁 Промокод",'<input id="prC" class="input" placeholder="Код"><input id="prA" class="input" type="number" placeholder="Сумма"><button class="btn btn-success btn-full" onclick="saveP()">Создать</button>')}
+function saveP(){var code=document.getElementById("prC").value.trim().toUpperCase();var amt=parseFloat(document.getElementById("prA").value)||0;db.add("promos",{code:code,curId:curDub().id,amt:amt,mx:10,used:0,usedBy:[]});clM();alert("Создан: "+code)}
+function admLogs(){var L=db.all("auditLogs").slice().sort(function(a,b){return b.t-a.t});var h='<div style="max-height:360px;overflow-y:auto">';L.slice(0,100).forEach(function(x){var u=x.uid?db.get("users",x.uid):null;h+='<div style="font-size:11px;padding:8px;background:#f9fafb;border-radius:8px;margin-bottom:6px"><b>'+(x.tp||"")+'</b> '+(u?"@"+u.nick:"")+'<div style="color:#64748b">'+(x.det||"")+'</div></div>'});h+='</div>';md("📜 Логи",h)}
+function admReset(){if(confirm("Удалить все?")){localStorage.clear();location.reload()}}
+
+/* ==================== БИЗНЕС ==================== */
+function createBusiness(){var eur=db.one("currencies","sym","€");if(getBalance(user.id,eur.id)<2000)return alert("Нужно 2000 €");var nm=prompt("Название:");if(!nm)return;withdrawMoney(user.id,eur.id,2000);var fid=db.add("factions",{name:nm,icon:"🏪",cat:"shop",isBusiness:true,bizOwnerId:user.id,treasury:0,admins:[user.id]});var rid=db.add("ranks",{fid:fid,name:"Владелец",lvl:100,perms:["ADD","REM","PROM","SHOP_SELL"]});db.add("members",{fid:fid,userId:user.id,rid:rid});alert("Бизнес создан!");render()}
+
+/* ==================== МВД / ФСБ ==================== */
+function mvdUK(fid){var f=db.get("factions",fid);var arts=f.ukArticles||[];var h='<div style="max-height:300px;overflow-y:auto">';arts.forEach(function(a){h+='<div class="list-item"><div class="list-item-content"><div class="list-item-title">Ст.'+a.num+' '+a.name+'</div><div class="list-item-sub">'+a.penalty+'</div></div></div>'});if(!arts.length)h+='<p>Нет статей</p>';h+='</div><button class="btn btn-success btn-full mt8" onclick="addUK('+fid+')">➕</button>';md("📕 УК",h)}
+function addUK(fid){md("➕",'<input id="ukN" class="input" placeholder="Номер"><input id="ukName" class="input" placeholder="Название"><input id="ukP" class="input" placeholder="Наказание"><button class="btn btn-success btn-full" onclick="saveUK('+fid+')">💾</button>')}
+function saveUK(fid){var f=db.get("factions",fid);var a=f.ukArticles||[];a.push({num:document.getElementById("ukN").value,name:document.getElementById("ukName").value,penalty:document.getElementById("ukP").value});db.upd("factions",fid,{ukArticles:a});clM();mvdUK(fid)}
+function mvdKoAP(fid){md("📗 КоАП",'<p>В разработке</p>')}
+function mvdWanted(){var w=db.all("wanted").filter(function(x){return x.act});var h="";w.forEach(function(x){var u=db.get("users",x.uid);h+='<div class="list-item"><div class="list-item-content"><div class="list-item-title">@'+(u?u.nick:"?")+'</div><div class="list-item-sub">'+x.rsn+'</div></div></div>'});if(!w.length)h='<p>Никого нет</p>';md("🚨 Розыск",h)}
+function mvdKPK(){md("📟 КПК",'<input id="kpkQ" class="input" placeholder="Ник или ID"><button class="btn btn-primary btn-full mt8" onclick="mvdKPKSearch()">🔍 Найти</button><div id="kpkRes" class="mt8"></div>',true)}
+function mvdKPKSearch(){var q=(document.getElementById("kpkQ").value||"").trim();var box=document.getElementById("kpkRes");var uid=null;if(/^\d+$/.test(q)){if(db.get("users",parseInt(q)))uid=parseInt(q)}if(!uid){var uu=db.all("users").find(function(u){return u.nick.toLowerCase()===q.toLowerCase()});if(uu)uid=uu.id}if(!uid){box.innerHTML='<p style="color:#ef4444">Не найдено</p>';return}box.innerHTML=kpkRenderDossier(uid)}
+function kpkRenderDossier(uid){
+  var u=db.get("users",uid);
+  if(!u)return"";
+  var dub=curDub();
+  var bal=dub?getBalance(uid,dub.id):0;
+  var w=isW(uid);
+  var rep=u.rep||10000;
+  var h='<div class="card" style="background:#0f172a;color:#e2e8f0">';
+  h+='<div style="font-size:18px;font-weight:700">@'+u.nick+' · ID '+uid+'</div>';
+  h+='<div class="info-row" style="border-color:#334155"><span>Баланс</span><span>'+U.money(bal)+' Ð</span></div>';
+  h+='<div class="info-row" style="border-color:#334155"><span>Розыск</span><span>'+(w?'<span class="wanted">ДА</span>':'нет')+'</span></div>';
+  h+='<div class="info-row" style="border-color:#334155"><span>Репутация</span><span>⭐ '+rep+'</span></div>';
+  h+='</div>';
+  return h
+}
+
+/* ==================== ФСБ: СЛЕЖКА ПО ГЕОЛОКАЦИИ ==================== */
+function fsbChats(){if(!canUseFSB())return alert("Только ФСБ");var users=db.all("users");var h='';users.forEach(function(u){h+='<div class="list-item" onclick="fsbReadUser('+u.id+')"><div class="list-item-icon">👤</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div></div></div>'});md("📨 Чаты",h)}
+function fsbReadUser(uid){var u=db.get("users",uid);var msgs=db.all("messages").filter(function(m){return m.from===uid||m.to===uid}).slice(-30);var h='<div style="max-height:350px;overflow-y:auto">';msgs.forEach(function(m){var fr=db.get("users",m.from);var to=db.get("users",m.to);h+='<div style="padding:6px;background:#1a1a25;border-radius:6px;margin-bottom:4px;font-size:11px"><span style="color:#6b7280">@'+(fr?fr.nick:"?")+'→@'+(to?to.nick:"?")+':</span> '+m.txt+'</div>'});h+='</div>';md("📨 @"+u.nick,h)}
+
+function fsbGeoTrace(){
+  if(!canUseFSB())return alert("Только ФСБ");
+  var users=db.all("users").filter(function(u){return u.id!==user.id});
+  var h='<div class="geo-card"><div style="display:flex;align-items:center;margin-bottom:12px"><span class="geo-dot"></span><span style="font-weight:700">🛰️ Система слежения ФСБ</span></div><p style="font-size:12px;color:#94a3b8;margin-bottom:12px">Выберите цель для отслеживания геолокации в реальном времени</p>';
+  h+='<label class="label" style="color:#cbd5e1">Цель слежения</label><select id="fsbTarget" class="input">';
+  users.forEach(function(u){h+='<option value="'+u.id+'">@'+u.nick+' (ID '+u.id+')</option>'});
+  h+='</select>';
+  h+='<div class="grid-2"><button class="btn btn-danger" onclick="fsbStartTrace()">🎯 Начать слежку</button><button class="btn btn-warning" onclick="fsbTraceAll()">📍 Все цели</button></div>';
+  h+='<div id="fsbGeoResult" class="mt8"></div></div>';
+  md("🛰️ СЛЕЖКА ФСБ",h,true);
+}
+
+function fsbStartTrace(){
+  var uid=parseInt(document.getElementById("fsbTarget").value);
+  var u=db.get("users",uid);
+  var box=document.getElementById("fsbGeoResult");
+  box.innerHTML='<div class="geo-card" style="margin-top:12px"><div style="text-align:center"><div style="font-size:36px">🛰️</div><div style="margin:8px 0"><span class="geo-dot"></span>Устанавливаем соединение...</div></div></div>';
+  logRu("ФСБ начало слежку за @"+u.nick);
+  
+  setTimeout(function(){
+    if(!navigator.geolocation){
+      box.innerHTML=fsbSimulatedTrace(u);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(function(pos){
+      var lat=pos.coords.latitude.toFixed(6);
+      var lon=pos.coords.longitude.toFixed(6);
+      var acc=Math.round(pos.coords.accuracy);
+      var alt=pos.coords.altitude?" · Выс "+Math.round(pos.coords.altitude)+"м":"";
+      var heading=pos.coords.heading?" · Курс "+Math.round(pos.coords.heading)+"°":"";
+      var speed=pos.coords.speed?" · Скор "+(pos.coords.speed*3.6).toFixed(1)+" км/ч":"";
+      
+      var traceLog={uid:uid,lat:lat,lon:lon,acc:acc,t:Date.now(),by:user.id};
+      db.add("auditLogs",{uid:user.id,tp:"ФСБ_слежка",det:"Цель @"+u.nick+" · "+lat+","+lon,t:Date.now()});
+      
+      var mapUrl="https://www.openstreetmap.org/export/embed.html?bbox="+(parseFloat(lon)-0.01)+","+(parseFloat(lat)-0.01)+","+(parseFloat(lon)+0.01)+","+(parseFloat(lat)+0.01)+"&layer=mapnik&marker="+lat+","+lon;
+      
+      box.innerHTML='<div class="geo-card" style="margin-top:12px;border-color:#22c55e"><div style="display:flex;align-items:center;margin-bottom:12px"><span class="geo-dot"></span><span style="font-weight:700">✅ Цель обнаружена: @'+u.nick+'</span></div><div style="font-size:12px;line-height:1.8;font-family:monospace"><div>📍 <b>Координаты:</b> '+lat+', '+lon+'</div><div>🎯 <b>Точность:</b> ~'+acc+' м</div><div>🕐 <b>Время:</b> '+new Date().toLocaleString("ru")+alt+heading+speed+'</div></div><iframe src="'+mapUrl+'" style="width:100%;height:200px;border:0;border-radius:8px;margin-top:10px"></iframe><div class="grid-2 mt8"><button class="btn btn-warning btn-sm" onclick="fsbUpdateTrace('+uid+')">🔄 Обновить</button><button class="btn btn-danger btn-sm" onclick="fsbStopTrace()">⏹ Стоп</button></div><div style="font-size:10px;color:#94a3b8;margin-top:8px">⚠️ Данные отправлены в архив ФСБ. Цель уведомлена не будет.</div></div>';
+      showNotif("🛰️ Цель найдена","@"+u.nick+" · "+lat+", "+lon);
+    },function(err){
+      box.innerHTML=fsbSimulatedTrace(u);
+    },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+  },1500);
+}
+
+function fsbSimulatedTrace(u){
+  // Фолбэк если браузер не даёт геолокацию
+  var baseLat=55.751244+Math.random()*0.1-0.05;
+  var baseLon=37.618423+Math.random()*0.1-0.05;
+  var lat=baseLat.toFixed(6);
+  var lon=baseLon.toFixed(6);
+  var locations=["Москва, Тверская ул.","Дублика, Центральный пр.","Неизвестная точка","Ближайший лес","Кафе «У Дубли»","Метро Дублинская","Парк Республики"];
+  var place=locations[U.rnd(0,locations.length-1)];
+  
+  db.add("auditLogs",{uid:user.id,tp:"ФСБ_слежка",det:"Симуляция: @"+u.nick+" · "+lat+","+lon+" ("+place+")",t:Date.now()});
+  
+  var mapUrl="https://www.openstreetmap.org/export/embed.html?bbox="+(parseFloat(lon)-0.01)+","+(parseFloat(lat)-0.01)+","+(parseFloat(lon)+0.01)+","+(parseFloat(lat)+0.01)+"&layer=mapnik&marker="+lat+","+lon;
+  
+  return '<div class="geo-card" style="margin-top:12px;border-color:#f59e0b"><div style="display:flex;align-items:center;margin-bottom:12px"><span class="geo-dot" style="background:#f59e0b"></span><span style="font-weight:700">⚠️ Режим симуляции</span></div><div style="font-size:11px;color:#fbbf24;margin-bottom:8px">Браузер не дал доступ к GPS. Используем симулированные данные.</div><div style="font-size:12px;line-height:1.8;font-family:monospace"><div>📍 <b>Цель:</b> @'+u.nick+'</div><div>📍 <b>Координаты:</b> '+lat+', '+lon+'</div><div>🏙️ <b>Место:</b> '+place+'</div><div>🕐 <b>Время:</b> '+new Date().toLocaleString("ru")+'</div></div><iframe src="'+mapUrl+'" style="width:100%;height:200px;border:0;border-radius:8px;margin-top:10px"></iframe><div class="grid-2 mt8"><button class="btn btn-warning btn-sm" onclick="fsbUpdateTrace('+u.id+')">🔄 Обновить</button><button class="btn btn-danger btn-sm" onclick="fsbStopTrace()">⏹ Стоп</button></div></div>';
+}
+
+function fsbUpdateTrace(uid){fsbStartTrace()}
+function fsbStopTrace(){clM();showNotif("⏹ Слежка прекращена","Данные сохранены в архив ФСБ")}
+
+function fsbTraceAll(){
+  var users=db.all("users").filter(function(u){return u.id!==user.id});
+  var h='<div style="max-height:400px;overflow-y:auto">';
+  users.forEach(function(u){
+    var lat=(55.75+Math.random()*0.1-0.05).toFixed(4);
+    var lon=(37.62+Math.random()*0.1-0.05).toFixed(4);
+    h+='<div class="list-item" style="background:#0f172a;color:#e2e8f0"><div class="list-item-icon">📍</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div><div class="list-item-sub" style="font-family:monospace;font-size:10px">'+lat+', '+lon+'</div></div></div>';
+  });
+  h+='</div>';
+  md("📍 Все цели",h,true);
+}
+
+function fsbBan(){if(!canUseFSB())return alert("Только ФСБ");var users=db.all("users").filter(function(u){return!u.adm&&u.id!==user.id});var h='<select id="banUid" class="input">';users.forEach(function(u){h+='<option value="'+u.id+'">@'+u.nick+'</option>'});h+='</select><button class="btn btn-danger btn-full" onclick="doBan()">🚫 Бан</button>';md("🚫 Бан",h)}
+function doBan(){db.upd("users",parseInt(document.getElementById("banUid").value),{blk:true});clM();alert("Забанен")}
+
+/* ==================== МОДАЛКИ ==================== */
+function md(t,b,w){var mw=w?"min(560px,96vw)":"400px";document.getElementById("md").innerHTML='<div class="modal-overlay" onclick="clMBg(event)"><div class="modal-box" style="max-width:'+mw+'"><div class="modal-header"><div class="modal-title">'+t+'</div><button class="modal-close" onclick="clM()">&times;</button></div><div class="modal-body">'+b+'</div></div></div>'}
+function clMBg(e){if(e.target.classList.contains("modal-overlay"))clM()}
+function clM(){document.getElementById("md").innerHTML=""}
+
+/* ==================== SMS ==================== */
+function openSmsInbox(){var rows=db.by("smsInbox","uid",user.id).slice().sort(function(a,b){return b.t-a.t});var h='<div style="max-height:440px;overflow-y:auto">';if(!rows.length)h+='<p style="color:#6b7280">Пусто</p>';else rows.forEach(function(r){db.upd("smsInbox",r.id,{read:true});h+='<div style="padding:12px;background:#f8fafc;border-radius:12px;margin-bottom:8px"><div style="font-size:10px;color:#6b7280">'+new Date(r.t).toLocaleString("ru")+'</div><div style="font-size:13px;margin-top:4px">'+r.txt+'</div></div>'});h+='</div>';md("📨 Уведомления",h,true);render()}
+
+/* ==================== ПЛАНШЕТ ==================== */
+function openTablet(){
+  var folders=[
+    {name:"💼 Работа",apps:[{n:"Мой бизнес",i:"💼",c:"#f59e0b",f:"go('fact')"},{n:"Вакансии",i:"👔",c:"#6366f1",f:"alert('Вакансии')"}]},
+    {name:"🏛️ Госуслуги",apps:[{n:"Мой налог",i:"💰",c:"#dc2626",f:"openTabletTax()"},{n:"Документы",i:"📄",c:"#3b82f6",f:"go('pass')"},{n:"Моя земля",i:"🗺️",c:"#16a34a",f:"openTabletLand()"},{n:"ГосВыплаты",i:"🎁",c:"#0d9488",f:"alert('Выплаты')"},{n:"ГосВыборы",i:"🗳️",c:"#7c3aed",f:"alert('Выборы')"},{n:"Суд",i:"⚖️",c:"#78350f",f:"alert('Суд')"}]},
+    {name:"💬 Соцсети",apps:[{n:"ДублиГрамм",i:"💬",c:"#0088cc",f:"go('chat')"},{n:"Моя Почта",i:"📧",c:"#ea580c",f:"alert('Почта')"}]},
+    {name:"🌐 Интернет",apps:[{n:"ДублиНет",i:"🌐",c:"#06b6d4",f:"alert('Браузер')"},{n:"WWW домены",i:"🔗",c:"#8b5cf6",f:"alert('Домены')"}]},
+    {name:"🎮 Развлечения",apps:[{n:"Казино",i:"🎰",c:"#db2777",f:"go('casino')"},{n:"ДублиАвито",i:"🛒",c:"#059669",f:"alert('Авито')"}]},
+    {name:"💹 Финансы",apps:[{n:"Мой Банк",i:"🏦",c:"#21a038",f:"go('bank')"},{n:"Биржа",i:"📈",c:"#f59e0b",f:"go('stock')"},{n:"ДублиПлей",i:"🛍️",c:"#3b82f6",f:"alert('Магазин')"}]},
+    {name:"🛡️ Спецслужбы",apps:[{n:"КПК",i:"📟",c:"#1e293b",f:"mvdKPK()",role:"mvd"},{n:"ФСБ.Опс",i:"🕵️",c:"#0f172a",f:"fsbChats()",role:"fsb"},{n:"📍 СЛЕЖКА",i:"🛰️",c:"#dc2626",f:"fsbGeoTrace()",role:"fsb"}]},
+    {name:"⚙️ Система",apps:[{n:"Помощь",i:"❓",c:"#64748b",f:"openTabletHelp()"},{n:"ДублиAI",i:"🧠",c:"#10b981",f:"openAI()"},{n:"Настройки",i:"⚙️",c:"#475569",f:"openTabletSettings()"},{n:"🏴 Чёрный рынок",i:"🏴",c:"#000",f:"openBlackMarket()"}]}
+  ];
+  
+  var h='<div class="tablet-overlay" onclick="if(event.target===this)closeTablet()"><div class="tablet-frame">';
+  h+='<div style="padding:10px 16px;background:rgba(0,0,0,.4);color:#fff;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #334155"><span style="font-weight:600">📱 Планшет Дублики</span><button style="background:none;border:none;color:#f87171;font-size:20px;cursor:pointer" onclick="closeTablet()">✕</button></div>';
+  h+='<div class="tablet-body">';
+  
+  folders.forEach(function(f){
+    var visibleApps=f.apps.filter(function(a){
+      if(!a.role)return true;
+      if(a.role==="mvd")return canUseMvdActions();
+      if(a.role==="fsb")return canUseFSB();
+      return true;
+    });
+    if(!visibleApps.length)return;
+    h+='<div class="tablet-folder"><div class="tablet-folder-title">'+f.name+'</div>';
+    visibleApps.forEach(function(a){
+      h+='<div class="tablet-app" onclick="closeTablet();setTimeout(function(){'+a.f+'},200)"><div class="tablet-app-icon" style="background:'+a.c+'">'+a.i+'</div><div class="tablet-app-name">'+a.n+'</div></div>';
+    });
+    h+='</div>';
+  });
+  
+  h+='</div></div></div>';
+  document.getElementById("md").innerHTML=h;
+}
+function closeTablet(){document.getElementById("md").innerHTML=""}
+function openTabletTax(){var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;var tax=Math.max(0,bal-3500)*0.1;md("💰 Налог",'<div style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;padding:16px;border-radius:16px;margin-bottom:12px"><div style="font-size:12px;opacity:.9">Минимум 3500 Ð неприкосновенен</div><div style="font-size:32px;font-weight:700;margin-top:8px">'+U.money(tax)+' Ð</div></div>'+(bal>3500?'<button class="btn btn-danger btn-full" onclick="payTax('+tax+')">Оплатить</button>':'<p style="color:#22c55e;text-align:center">✅ Ниже минимума</p>'),true)}
+function payTax(amt){var dub=curDub();if(getBalance(user.id,dub.id)<amt)return;withdrawMoney(user.id,dub.id,amt);clM();alert("Уплачено!");render()}
+function openTabletLand(){md("🗺️ Земля",'<p>Раздел в разработке</p>',true)}
+function openTabletHelp(){md("❓ Помощь",'<div style="line-height:1.8"><b>Как начать:</b><br>1. Паспорт<br>2. Карта<br>3. Обмен €<br>4. Бизнес (2000€)<br><br><b>Особенности V19:</b><br>• 📍 ФСБ слежка по GPS<br>• 🏆 Система достижений<br>• ⭐ Репутация<br>• 🌤️ Погода<br>• 🏴 Чёрный рынок</div>',true)}
+function openTabletSettings(){var isDark=document.body.classList.contains("dark");md("⚙️ Настройки",'<div class="card"><div class="info-row"><span>Тёмная тема</span><div class="toggle '+(isDark?"on":"")+'" onclick="toggleDark(this)"></div></div></div><button class="btn btn-danger btn-full" onclick="clM();backToSlots()">🔄 Сменить аккаунт</button>',true)}
+function toggleDark(el){document.body.classList.toggle("dark");el.classList.toggle("on");localStorage.setItem("darkTheme",document.body.classList.contains("dark")?"1":"0")}
+
+/* ==================== ЧЁРНЫЙ РЫНОК (НОВАЯ ФИЧА) ==================== */
+function openBlackMarket(){
+  var h='<div class="geo-card" style="background:linear-gradient(135deg,#1a1a1a,#000)"><div style="font-size:18px;font-weight:700">🏴 Чёрный рынок</div><p style="font-size:11px;color:#94a3b8;margin-top:4px">Секретный раздел. Только для смелых.</p></div>';
+  h+='<div class="card"><div class="card-head">💊 Товары</div>';
+  var goods=[
+    {n:"Фальшивый паспорт",p:5000,i:"🪪"},
+    {n:"Взломанный аккаунт",p:3000,i:"👤"},
+    {n:"Поддельная карта",p:8000,i:"💳"},
+    {n:"Инсайдерская инфа",p:15000,i:"📰"},
+    {n:"Снятие розыска",p:25000,i:"🚨"}
+  ];
+  goods.forEach(function(g){
+    h+='<div class="list-item"><div class="list-item-icon">'+g.i+'</div><div class="list-item-content"><div class="list-item-title">'+g.n+'</div><div class="list-item-sub">'+U.money(g.p)+' Ð</div></div><button class="btn btn-danger btn-sm" onclick="buyBlackMarket(\''+g.n+'\','+g.p+')">💸</button></div>';
+  });
+  h+='</div>';
+  h+='<div class="card" style="background:#fef3c7;border:2px solid #f59e0b"><b>⚠️ ВНИМАНИЕ</b><p style="font-size:12px;margin-top:6px">Покупка на чёрном рынке снижает репутацию на 20⭐ и может привести к розыску МВД!</p></div>';
+  md("🏴 Чёрный рынок",h,true);
+}
+function buyBlackMarket(name,price){
+  var dub=curDub();
+  if(getBalance(user.id,dub.id)<price)return alert("Недостаточно");
+  if(!confirm("Вы уверены? Это снизит репутацию на 20⭐ и может привлечь внимание МВД."))return;
+  withdrawMoney(user.id,dub.id,price);
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-20)});
+  // 40% шанс попасться
+  if(Math.random()<0.4){
+    db.add("wanted",{uid:user.id,rsn:"Покупка на чёрном рынке",act:true,by:9999,d:Date.now()});
+    pushSms(user.id,"🚨 МВД получило наводку! Вы в розыске за покупку на чёрном рынке");
+    showNotif("🚨 Поймали!","МВД объявило вас в розыск");
+  }else{
+    pushSms(user.id,"🏴 Товар «"+name+"» получен. Репутация -20⭐");
+    showNotif("✅ Сделка","Получено: "+name);
+  }
+  clM();render();
+}
+
+/* ==================== ЗАПУСК ==================== */
+initStocks();
+if(localStorage.getItem("darkTheme")==="1")document.body.classList.add("dark");
+render();
+setInterval(function(){updateStocks();if(user&&tab==="stock")render()},60000);
+setInterval(updateWeather,300000);
+</script>
+<!-- КОНЕЦ ЧАСТИ 1 -->
+ <script>
+/* ============================================================
+   🔧 ПАТЧ V19 — ДОПОЛНЕНИЯ К БАЗЕ V18
+   Добавляет: 3 слота, мошенники, планшет с папками, ФСБ слежка,
+   достижения, погоду, чёрный рынок, репутацию
+   ============================================================ */
+
+/* ---------- РЕПУТАЦИЯ И ПОГОДА ---------- */
+function showNotif(t,txt){
+  var n=document.createElement("div");
+  n.style.cssText="position:fixed;top:20px;right:20px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:14px 18px;border-radius:12px;z-index:3000;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:slideIn .3s;max-width:320px;font-size:13px";
+  n.innerHTML="<b>"+t+"</b><div style='font-size:12px;margin-top:4px'>"+txt+"</div>";
+  document.body.appendChild(n);
+  setTimeout(function(){n.style.opacity="0";n.style.transition="opacity .3s";setTimeout(function(){n.remove()},300)},3500);
+}
+
+var weatherData=null;
+function updateWeather(){
+  if(!user)return;
+  var conds=["☀️ Ясно","⛅ Облачно","🌧️ Дождь","⛈️ Гроза","🌨️ Снег","🌫️ Туман","🌤️ Малооблачно","💨 Ветрено"];
+  weatherData={temp:U.rnd(-5,30),cond:conds[U.rnd(0,conds.length-1)],wind:U.rnd(0,20),updated:Date.now()};
+  try{localStorage.setItem("weather_"+user.id,JSON.stringify(weatherData))}catch(e){}
+}
+function getWeather(){
+  if(weatherData&&Date.now()-weatherData.updated<300000)return weatherData;
+  try{
+    var c=localStorage.getItem("weather_"+(user?user.id:""));
+    if(c){var d=JSON.parse(c);if(Date.now()-d.updated<300000){weatherData=d;return d}}
+  }catch(e){}
+  updateWeather();return weatherData;
+}
+if(!window._weatherIv){window._weatherIv=setInterval(updateWeather,300000)}
+
+/* ---------- ДОСТИЖЕНИЯ ---------- */
+function checkAchievements(){
+  if(!user||!db.d.achievements)db.d.achievements=[];
+  var achs=db.all("achievements").filter(function(a){return a.uid===user.id});
+  var has=function(c){return achs.some(function(a){return a.code===c})};
+  var add=function(c,n,i,d){
+    if(!has(c)){
+      db.add("achievements",{uid:user.id,code:c,name:n,icon:i,desc:d,t:Date.now()});
+      showNotif("🏆 Достижение!",i+" "+n+" — "+d);
+    }
+  };
+  var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;
+  if(bal>=10000)add("rich1","Первая десятка","💰","Накопил 10 000 Ð");
+  if(bal>=100000)add("rich2","Богач","💎","Накопил 100 000 Ð");
+  if(bal>=1000000)add("rich3","Миллионер","👑","Накопил 1 000 000 Ð");
+  if(db.by("passports","userId",user.id).length)add("pass1","Гражданин","🪪","Получил паспорт");
+  if(db.by("cards","userId",user.id).length)add("card1","Банковский","💳","Получил карту");
+  if(db.by("members","userId",user.id).length)add("worker","Трудяга","💼","Устроился на работу");
+  if(db.all("factions").some(function(f){return f.bizOwnerId===user.id}))add("boss","Бизнесмен","🏪","Открыл бизнес");
+  if(db.by("userStocks","uid",user.id).length)add("investor","Инвестор","📈","Купил первую акцию");
+  if(user.adm)add("admin","Властелин","⚡","Стал администратором");
+}
+
+/* ---------- 3 СЛОТА АККАУНТОВ ---------- */
+if(!db.d.slots)db.d.slots=[null,null,null];db.sv();
+
+function slotsScreen(){
+  var slots=db.d.slots;
+  var h='<div class="auth-page"><div class="auth-card"><div class="auth-logo"><div class="auth-logo-icon">🏦</div><div class="auth-logo-text">DubleCass V19</div><div style="font-size:10px;color:#6b7280">'+COUNTRY.name+'</div></div>';
+  h+='<div style="font-size:12px;color:#64748b;text-align:center;margin-bottom:16px">Выберите профиль или создайте новый (макс. 3)</div>';
+  for(var i=0;i<3;i++){
+    var uid=slots[i];var u=uid?db.get("users",uid):null;
+    if(u){
+      var dub=curDub();var bal=dub?getBalance(uid,dub.id):0;
+      var w=isW(uid);
+      h+='<div class="acct-slot" onclick="switchSlot('+i+')"><div style="font-size:36px">'+(u.ph||"👤")+'</div><div style="font-weight:700;margin-top:6px">@'+u.nick+'</div><div style="font-size:11px;color:#6b7280">'+U.money(bal)+' Ð · Слот '+(i+1)+'</div>'+(w?'<span class="wanted" style="margin-top:4px">🚨 РОЗЫСК</span>':'')+(u.adm?'<span class="badge badge-admin" style="margin-top:4px">👑</span>':'')+'</div>';
+    }else{
+      h+='<div class="acct-slot" onclick="createSlot('+i+')"><div style="font-size:36px;opacity:.3">➕</div><div style="color:#94a3b8;margin-top:6px">Слот '+(i+1)+' — свободно</div></div>';
+    }
+  }
+  h+='<button class="btn btn-danger btn-full mt8" onclick="if(confirm(\'Удалить ВСЕ данные?\')){localStorage.clear();location.reload()}">🗑️ Сброс всех данных</button>';
+  h+='</div></div>';
+  return h;
+}
+function createSlot(i){
+  var nick=prompt("Ник для слота "+(i+1)+":");
+  if(!nick||nick.trim().length<2)return;nick=nick.trim();
+  if(db.one("users","nick",nick)){alert("Ник занят");return}
+  var pw=prompt("Пароль (мин 4):");if(!pw||pw.length<4)return alert("Мин 4 символа");
+  var uid=db.add("users",{nick:nick,pwh:U.hash(pw),adm:false,blk:false,accB:false,ph:"👤",rep:10000});
+  var dub=curDub();if(dub)giveDenoms(uid,dub.id,5000);
+  db.add("creditHistory",{userId:uid,score:100,recs:[]});
+  if(db.d.aid===null){db.d.aid=uid;db.upd("users",uid,{adm:true})}
+  var cr=db.one("gameRoles","slug","citizen");
+  if(cr)db.add("userRoleGrants",{uid:uid,roleId:cr.id});
+  db.d.slots[i]=uid;db.sv();
+  localStorage.setItem("u20",uid);user=db.get("users",uid);
+  pushSms(uid,"Добро пожаловать в DubleCass V19! Стартовый капитал: 5000 Ð. 🌤️ Сегодня отличная погода для старта!");
+  tab="home";render();
+}
+function switchSlot(i){
+  var uid=db.d.slots[i];if(!uid)return;
+  var u=db.get("users",uid);if(!u)return;
+  localStorage.setItem("u20",uid);user=u;tab="home";render();
+}
+function backToSlots(){localStorage.removeItem("u20");user=null;render()}
+
+/* ---------- ПЕРЕОПРЕДЕЛЕНИЕ РЕНДЕРА ---------- */
+var _origRender=render;
+render=function(){
+  try{
+    var app=document.getElementById("app");
+    var uid=localStorage.getItem("u20");
+    if(uid)user=db.get("users",parseInt(uid));
+    if(!user){app.innerHTML=slotsScreen();return}
+    _origRender();
+    setTimeout(function(){checkAchievements();scamCheck()},500);
+  }catch(e){console.error(e);document.getElementById("app").innerHTML='<div class="auth-page"><div class="auth-card"><div class="auth-err">Ошибка: '+e.message+'</div><button class="btn btn-primary btn-full" onclick="location.reload()">Обновить</button></div></div>'}
+};
+
+/* ---------- ШАПКА С ПОГОДОЙ И РЕПУТАЦИЕЙ ---------- */
+var _origHdr=hdr;
+hdr=function(){
+  var w=getWeather();
+  var orig=_origHdr();
+  // Вставляем погоду и репутацию в шапку
+  var extra='<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">'+
+    '<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">'+(w?w.cond+" "+w.temp+"°C":"")+'</span>'+
+    '<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">⭐ '+(user.rep||10000)+'</span>'+
+    '<button class="btn btn-dark btn-sm" onclick="backToSlots()" title="Сменить аккаунт">🔄</button>'+
+  '</div>';
+  return orig.replace('</div></div>',extra+'</div></div>');
+};
+
+/* ---------- ПАСПОРТ: ФАМИЛИЯ НЕОБЯЗАТЕЛЬНА ---------- */
+reqPassport=function(){
+  if(isWantedMe()){alert("Пока вы в розыске, оформление паспорта недоступно");return}
+  var mvds=getMVDs();if(!mvds.length){alert("В системе пока нет отделений МВД");return}
+  var mo="";for(var i=0;i<mvds.length;i++)mo+='<option value="'+mvds[i].id+'">'+mvds[i].icon+' '+mvds[i].name+'</option>';
+  md("📝 Заявление на паспорт гражданина Дублики",
+    '<label class="label">Отделение МВД</label><select id="pMvd" class="input">'+mo+'</select>'+
+    '<label class="label">Фото (эмодзи)</label><input type="text" id="pPh" class="input" value="👤" maxlength="2">'+
+    '<label class="label">Имя *</label><input type="text" id="pN" class="input" placeholder="Иван">'+
+    '<label class="label">Фамилия <span style="color:#6b7280;font-size:11px">(необязательно)</span></label><input type="text" id="pS" class="input" placeholder="По умолчанию: Дубли">'+
+    '<label class="label">Дата рождения *</label><input type="date" id="pB" class="input">'+
+    '<label class="label">Пол</label><select id="pG" class="input"><option value="М">Мужской</option><option value="Ж">Женский</option></select>'+
+    '<button class="btn btn-success btn-full" onclick="sendPassReq()">📨 Отправить заявление</button>');
+};
+
+sendPassReq=function(){
+  if(isWantedMe()){alert("Пока вы в розыске, оформление паспорта недоступно");return}
+  var n=document.getElementById("pN").value.trim();
+  var s=document.getElementById("pS").value.trim();
+  var b=document.getElementById("pB").value;
+  if(!n){alert("Имя обязательно");return}
+  if(!b){alert("Дата рождения обязательна");return}
+  // Фамилия необязательна — по умолчанию "Дубли"
+  if(!s){
+    var taken=db.all("passports").some(function(p){return p.sur==="Дубли"});
+    if(taken){
+      var sug="Дубли",cnt=1;
+      while(db.all("passports").some(function(p){return p.sur===sug})){cnt++;sug="Дубли"+cnt}
+      var choice=prompt("Фамилия «Дубли» занята.\nПредлагаем: "+sug+"\n\nОК — взять "+sug+"\nИли напишите свою:");
+      s=(choice&&choice.trim())?choice.trim():sug;
+    }else{s="Дубли"}
+  }
+  var mvdId=parseInt(document.getElementById("pMvd").value);
+  var mvd=db.get("factions",mvdId);
+  var auto=!passReqNeedsMvdApproval();
+  if(auto){
+    db.add("passports",{userId:user.id,ph:document.getElementById("pPh").value||"👤",name:n,sur:s,birth:b,gen:document.getElementById("pG").value,ser:(Math.floor(Math.random()*90)+10)+" "+(Math.floor(Math.random()*90)+10),numId:U.gId(),issuer:mvd?mvd.name:"МВД Дублики",iss:Date.now(),approved:true,workplace:"Безработный"});
+    db.add("passReqs",{userId:user.id,mvdId:mvdId,ph:document.getElementById("pPh").value||"👤",name:n,sur:s,birth:b,gen:document.getElementById("pG").value,st:"approved"});
+    pushSms(user.id,"🪪 Паспорт выдан: "+n+" "+s);
+    clM();alert("Паспорт выдан автоматически!");render();
+  }else{
+    db.add("passReqs",{userId:user.id,mvdId:mvdId,ph:document.getElementById("pPh").value||"👤",name:n,sur:s,birth:b,gen:document.getElementById("pG").value,st:"pending"});
+    clM();alert("Заявление отправлено! Ожидайте решения МВД.");render();
+  }
+};
+
+/* ---------- МОШЕННИКИ (баланс < 3000 + долг) ---------- */
+function scamCheck(){
+  if(!user)return;
+  var dub=curDub();if(!dub)return;
+  var bal=getBalance(user.id,dub.id);
+  var hasDebt=db.by("fines","uid",user.id).some(function(f){return!f.paid})||db.by("credits","uid",user.id).some(function(c){return c.st==="active"});
+  if(bal<3000&&hasDebt&&!localStorage.getItem("scam_"+user.id)){
+    setTimeout(scamOffer,2500);
+  }
+}
+function scamOffer(){
+  md("📨 Неизвестный номер",
+    '<div style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:#e0e0e0;border-radius:16px;padding:16px;border:1px solid #e94560">'+
+    '<p style="font-size:13px;line-height:1.6">🕶️ <b>Неизвестный:</b><br><br>"Слышь, брат, вижу у тебя проблемы с долгами. Переводи 500 Ð, а я через связи в ЦБ спишу тебе весь долг. Точно работает, только быстро. Никому не говори — могут спалить."<br><br>⚠️ <i>Это подозрительно. Есть риск спалиться.</i></p></div>'+
+    '<div class="grid-2 mt8"><button class="btn btn-danger" onclick="scamAccept()">💸 Перевести 500</button><button class="btn btn-success" onclick="scamReport()">🚨 В МВД</button></div>'+
+    '<button class="btn btn-secondary btn-full mt8" onclick="scamIgnore()">Игнорировать</button>');
+}
+function scamAccept(){
+  var dub=curDub();
+  if(getBalance(user.id,dub.id)<500)return alert("Недостаточно");
+  withdrawMoney(user.id,dub.id,500);
+  localStorage.setItem("scam_"+user.id,"1");
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-10)});
+  clM();
+  // 30% шанс что мошенник спалится и тебя спасут
+  if(Math.random()<0.3){
+    giveDenoms(user.id,dub.id,1000);
+    db.upd("users",user.id,{rep:Math.min(200,(user.rep||10000)+5)});
+    showNotif("🕵️ ФСБ вмешалось!","Мошенник спалился. Возврат 500 Ð + бонус 500 Ð от ФСБ");
+    pushSms(user.id,"🕵️ ФСБ отследило мошенника! Деньги возвращены + бонус");
+  }else{
+    pushSms(user.id,"💸 Вы перевели 500 Ð неизвестному. Долг НЕ списан. Вас обманули!");
+    alert("Деньги ушли... Долг остался. Вас обманули! 😭");
+  }
+  render();
+}
+function scamReport(){
+  localStorage.setItem("scam_"+user.id,"1");
+  db.add("wanted",{uid:9999,rsn:"Мошенничество (заявление @"+user.nick+")",act:true,by:user.id,d:Date.now()});
+  db.upd("users",user.id,{rep:Math.min(200,(user.rep||10000)+10)});
+  clM();
+  pushSms(user.id,"🚨 Заявление принято! Мошенник в розыске. +10 к репутации");
+  showNotif("🚨 Молодец!","Мошенник объявлен в розыск. +10 ⭐");
+  render();
+}
+function scamIgnore(){localStorage.setItem("scam_"+user.id,"1");clM();render()}
+
+/* ---------- ПЛАНШЕТ С ПАПКАМИ ---------- */
+function openTablet(){
+  var folders=[
+    {name:"💼 Работа",icon:"💼",apps:[
+      {n:"Мой бизнес",i:"💼",c:"#f59e0b",f:"go('fact')"},
+      {n:"Вакансии",i:"👔",c:"#6366f1",f:"alert('Вакансии в разработке')"},
+      {n:"Моя работа",i:"📋",c:"#0ea5e9",f:"go('prof')"}
+    ]},
+    {name:"🏛️ Госуслуги",icon:"🏛️",apps:[
+      {n:"Мой налог",i:"💰",c:"#dc2626",f:"openTabletTax()"},
+      {n:"Документы",i:"📄",c:"#3b82f6",f:"go('pass')"},
+      {n:"Моя земля",i:"🗺️",c:"#16a34a",f:"openTabletLand()"},
+      {n:"ГосВыплаты",i:"🎁",c:"#0d9488",f:"openTabletGosPay()"},
+      {n:"ГосВыборы",i:"🗳️",c:"#7c3aed",f:"alert('Выборы объявляет админ')"},
+      {n:"Суд",i:"⚖️",c:"#78350f",f:"alert('Суд в разработке')"}
+    ]},
+    {name:"💬 Соцсети",icon:"💬",apps:[
+      {n:"ДублиГрамм",i:"💬",c:"#0088cc",f:"go('chat')"},
+      {n:"Моя Почта",i:"📧",c:"#ea580c",f:"alert(user.nick+'@duble.ru')"}
+    ]},
+    {name:"🌐 Интернет",icon:"🌐",apps:[
+      {n:"ДублиНет",i:"🌐",c:"#06b6d4",f:"alert('Браузер ДублиНет в разработке')"},
+      {n:"WWW домены",i:"🔗",c:"#8b5cf6",f:"alert('Домены в разработке')"}
+    ]},
+    {name:"🎮 Развлечения",icon:"🎮",apps:[
+      {n:"Казино",i:"🎰",c:"#db2777",f:"go('casino')"},
+      {n:"ДублиАвито",i:"🛒",c:"#059669",f:"alert('Авито в разработке')"}
+    ]},
+    {name:"💹 Финансы",icon:"💹",apps:[
+      {n:"Мой Банк",i:"🏦",c:"#21a038",f:"go('bank')"},
+      {n:"Биржа",i:"📈",c:"#f59e0b",f:"go('stock')"},
+      {n:"ДублиПлей",i:"🛍️",c:"#3b82f6",f:"alert('Магазин приложений в разработке')"}
+    ]},
+    {name:"🛡️ Спецслужбы",icon:"🛡️",apps:[
+      {n:"КПК МВД",i:"📟",c:"#1e293b",f:"mvdKPK()",role:"mvd"},
+      {n:"ФСБ.Чаты",i:"🕵️",c:"#0f172a",f:"fsbChats()",role:"fsb"},
+      {n:"🛰️ СЛЕЖКА",i:"🛰️",c:"#dc2626",f:"fsbGeoTrace()",role:"fsb"}
+    ]},
+    {name:"⚙️ Система",icon:"⚙️",apps:[
+      {n:"Помощь",i:"❓",c:"#64748b",f:"openTabletHelp()"},
+      {n:"ДублиAI",i:"🧠",c:"#10b981",f:"openAI()"},
+      {n:"Настройки",i:"⚙️",c:"#475569",f:"openTabletSettings()"},
+      {n:"🏴 Чёрный рынок",i:"🏴",c:"#000",f:"openBlackMarket()"},
+      {n:"🏆 Достижения",i:"🏆",c:"#f59e0b",f:"openAchievements()"}
+    ]}
+  ];
+  
+  var w=getWeather();
+  var now=new Date();
+  var timeStr=now.toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});
+  var dateStr=now.toLocaleDateString('ru',{day:'numeric',month:'long'});
+  var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;
+  
+  var h='<div class="tablet-overlay" onclick="if(event.target===this)closeTablet()"><div class="tablet-frame">';
+  h+='<div style="padding:10px 16px;background:rgba(0,0,0,.4);color:#fff;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #334155;font-size:12px">'+
+    '<div style="display:flex;gap:12px;align-items:center"><span style="font-weight:600">📱 Планшет Дублики</span><span style="opacity:.7">'+timeStr+' · '+dateStr+'</span></div>'+
+    '<div style="display:flex;gap:12px;align-items:center">'+
+      '<span>🌤️ '+(w?w.temp+"°C":"")+'</span>'+
+      '<span>💰 '+U.money(bal)+' Ð</span>'+
+      '<span>⭐ '+(user.rep||10000)+'</span>'+
+      '<button style="background:none;border:none;color:#f87171;font-size:20px;cursor:pointer" onclick="closeTablet()">✕</button>'+
+    '</div></div>';
+  h+='<div class="tablet-body">';
+  
+  folders.forEach(function(f){
+    var visibleApps=f.apps.filter(function(a){
+      if(!a.role)return true;
+      if(a.role==="mvd")return canUseMvdActions();
+      if(a.role==="fsb")return canUseFSB();
+      return true;
+    });
+    if(!visibleApps.length)return;
+    h+='<div class="tablet-folder"><div class="tablet-folder-title">'+f.name+'</div>';
+    visibleApps.forEach(function(a){
+      h+='<div class="tablet-app" onclick="closeTablet();setTimeout(function(){'+a.f+'},200)">'+
+        '<div class="tablet-app-icon" style="background:linear-gradient(135deg,'+a.c+','+shadeColor(a.c,-20)+')">'+a.i+'</div>'+
+        '<div class="tablet-app-name">'+a.n+'</div></div>';
+    });
+    h+='</div>';
+  });
+  
+  h+='</div></div></div>';
+  document.getElementById("md").innerHTML=h;
+}
+function closeTablet(){document.getElementById("md").innerHTML=""}
+function shadeColor(c,p){var n=parseInt(c.replace('#',''),16),a=Math.round(2.55*p),R=Math.max(0,Math.min(255,(n>>16)+a)),G=Math.max(0,Math.min(255,(n>>8&0xFF)+a)),B=Math.max(0,Math.min(255,(n&0xFF)+a));return'#'+(0x1000000+R*0x10000+G*0x100+B).toString(16).slice(1)}
+
+/* ---------- ПРИЛОЖЕНИЯ ПЛАНШЕТА ---------- */
+function openTabletTax(){
+  var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;
+  var MIN=3500;var base=Math.max(0,bal-MIN);var tax=Math.floor(base*0.1);
+  md("💰 Мой налог",
+    '<div style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;padding:16px;border-radius:16px;margin-bottom:12px">'+
+    '<div style="font-size:12px;opacity:.9">Минимум 3500 Ð неприкосновенен (Конституция)</div>'+
+    '<div style="font-size:32px;font-weight:700;margin-top:8px">'+U.money(tax)+' Ð</div></div>'+
+    '<div class="info-row"><span>Баланс</span><span>'+U.money(bal)+' Ð</span></div>'+
+    '<div class="info-row"><span>База налога</span><span>'+U.money(base)+' Ð</span></div>'+
+    '<div class="info-row"><span>Ставка</span><span>10%</span></div>'+
+    (bal>MIN?'<button class="btn btn-danger btn-full mt8" onclick="payTabletTax('+tax+')">💸 Оплатить</button>':'<div class="card" style="background:#f0fdf4;text-align:center">✅ Баланс ниже минимума — налог не взимается</div>'),true);
+}
+function payTabletTax(amt){
+  var dub=curDub();if(getBalance(user.id,dub.id)<amt)return alert("Недостаточно");
+  withdrawMoney(user.id,dub.id,amt);
+  var pravo=db.all("factions").find(function(f){return f.isPRVO||f.cat==="pravo"});
+  if(pravo)db.upd("factions",pravo.id,{treasury:(pravo.treasury||0)+amt});
+  pushSms(user.id,"💰 Налог уплачен: "+U.money(amt)+" Ð");
+  clM();alert("✅ Налог уплачен!");render();
+}
+function openTabletLand(){md("🗺️ Моя земля",'<div style="background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;padding:16px;border-radius:16px;margin-bottom:12px"><div style="font-size:16px;font-weight:700">🗺️ Кадастр Республики Дублика</div></div><p style="color:#6b7280;font-size:12px">Раздел в разработке. Скоро можно будет покупать участки!</p>',true)}
+function openTabletGosPay(){
+  var myPays=db.by("gos_payments","userId",user.id);
+  md("🎁 ГосВыплаты",
+    '<div style="background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;padding:16px;border-radius:16px;margin-bottom:12px"><div style="font-size:16px;font-weight:700">🎁 ГосВыплаты</div><div style="font-size:12px;opacity:.9">Пенсии, пособия от Правительства</div></div>'+
+    '<div class="card"><div class="card-head">Мои выплаты ('+myPays.length+')</div>'+
+    (myPays.length?myPays.slice(-5).reverse().map(function(p){return'<div class="info-row"><span>'+p.type+'</span><span style="color:#22c55e">+'+U.money(p.amount)+' Ð</span></div>'}).join(""):'<p style="color:#6b7280;font-size:12px">Выплат пока нет</p>')+
+    '</div><p style="font-size:11px;color:#64748b">Пенсия назначается только ПР-ВО. Обратитесь к лидеру.</p>',true);
+}
+function openTabletHelp(){
+  md("❓ Помощь",
+    '<div style="background:linear-gradient(135deg,#64748b,#475569);color:#fff;padding:16px;border-radius:16px;margin-bottom:12px"><div style="font-size:16px;font-weight:700">❓ Помощь V19</div></div>'+
+    '<div class="card"><div class="card-head">🚀 Как начать</div>'+
+    '<div style="font-size:13px;line-height:1.8">1. Получи паспорт (раздел Паспорт)<br>2. Закажи карту (раздел Банк)<br>3. Обменяй Дубли на Евро<br>4. Открой бизнес за 2000 €<br>5. Открой планшет на главной!</div></div>'+
+    '<div class="card"><div class="card-head">🆕 Новинки V19</div>'+
+    '<div style="font-size:13px;line-height:1.8">• 📍 <b>ФСБ слежка</b> по геолокации<br>• 🏆 <b>Система достижений</b><br>• ⭐ <b>Репутация</b> (0-200)<br>• 🌤️ <b>Погода</b> в шапке<br>• 🏴 <b>Чёрный рынок</b> (секретно!)<br>• 📱 <b>3 слота аккаунтов</b><br>• 🕶️ <b>Мошенники</b> (баланс &lt; 3000)</div></div>'+
+    '<button class="btn btn-purple btn-full" onclick="clM();openAI()">🧠 Спросить ДублиAI</button>',true);
+}
+function openTabletSettings(){
+  var isDark=document.body.classList.contains("dark");
+  md("⚙️ Настройки",
+    '<div class="card"><div class="card-head">🎨 Оформление</div>'+
+    '<div class="info-row"><span>Тёмная тема</span><div class="toggle '+(isDark?"on":"")+'" onclick="toggleDarkV19(this)"></div></div></div>'+
+    '<div class="card"><div class="card-head">👤 Аккаунт</div>'+
+    '<div class="info-row"><span>Репутация</span><span>⭐ '+(user.rep||10000)+'</span></div>'+
+    '<button class="btn btn-warning btn-full mt8" onclick="chPw()">🔐 Сменить пароль</button>'+
+    '<button class="btn btn-danger btn-full mt8" onclick="clM();backToSlots()">🔄 Сменить аккаунт</button></div>',true);
+}
+function toggleDarkV19(el){document.body.classList.toggle("dark");el.classList.toggle("on");localStorage.setItem("darkTheme",document.body.classList.contains("dark")?"1":"0")}
+function openAchievements(){
+  if(!db.d.achievements)db.d.achievements=[];
+  var achs=db.all("achievements").filter(function(a){return a.uid===user.id});
+  var allAch=[
+    {c:"rich1",i:"💰",n:"Первая десятка",d:"Накопить 10 000 Ð"},
+    {c:"rich2",i:"💎",n:"Богач",d:"Накопить 100 000 Ð"},
+    {c:"rich3",i:"👑",n:"Миллионер",d:"Накопить 1 000 000 Ð"},
+    {c:"pass1",i:"🪪",n:"Гражданин",d:"Получить паспорт"},
+    {c:"card1",i:"💳",n:"Банковский",d:"Получить карту"},
+    {c:"worker",i:"💼",n:"Трудяга",d:"Устроиться на работу"},
+    {c:"boss",i:"🏪",n:"Бизнесмен",d:"Открыть бизнес"},
+    {c:"investor",i:"📈",n:"Инвестор",d:"Купить акцию"},
+    {c:"admin",i:"⚡",n:"Властелин",d:"Стать админом"}
+  ];
+  var h='<div style="background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#000;padding:16px;border-radius:16px;margin-bottom:12px"><div style="font-size:16px;font-weight:700">🏆 Достижения ('+achs.length+'/'+allAch.length+')</div></div>';
+  allAch.forEach(function(a){
+    var got=achs.some(function(x){return x.code===a.c});
+    h+='<div class="list-item" style="opacity:'+(got?1:0.5)+'"><div class="list-item-icon" style="font-size:32px">'+a.i+'</div><div class="list-item-content"><div class="list-item-title">'+(got?"✅ ":"🔒 ")+a.n+'</div><div class="list-item-sub">'+a.d+'</div></div></div>';
+  });
+  md("🏆 Достижения",h,true);
+}
+
+/* ---------- ФСБ СЛЕЖКА ПО ГЕОЛОКАЦИИ ---------- */
+function fsbGeoTrace(){
+  if(!canUseFSB()){alert("Только сотрудники ФСБ/админ");return}
+  var users=db.all("users").filter(function(u){return u.id!==user.id});
+  var h='<div style="background:linear-gradient(135deg,#0f172a,#1e293b);color:#e2e8f0;border-radius:16px;padding:16px;border:1px solid #334155;margin-bottom:12px">'+
+    '<div style="display:flex;align-items:center;margin-bottom:8px"><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:8px;animation:pulse 1.5s infinite"></span><span style="font-weight:700;font-size:14px">🛰️ Система слежения ФСБ</span></div>'+
+    '<p style="font-size:12px;color:#94a3b8">Реальная геолокация через GPS браузера + OpenStreetMap</p></div>'+
+    '<label class="label" style="color:#cbd5e1">Цель слежения</label><select id="fsbTarget" class="input">';
+  users.forEach(function(u){h+='<option value="'+u.id+'">@'+u.nick+' (ID '+u.id+')</option>'});
+  h+='</select><div class="grid-2 mt8"><button class="btn btn-danger" onclick="fsbStartTrace()">🎯 Начать слежку</button><button class="btn btn-warning" onclick="fsbTraceAll()">📍 Все цели</button></div><div id="fsbGeoResult" class="mt8"></div>';
+  md("🛰️ СЛЕЖКА ФСБ",h,true);
+}
+function fsbStartTrace(){
+  var uid=parseInt(document.getElementById("fsbTarget").value);
+  var u=db.get("users",uid);
+  var box=document.getElementById("fsbGeoResult");
+  box.innerHTML='<div style="background:#0f172a;color:#94a3b8;padding:20px;border-radius:12px;text-align:center"><div style="font-size:36px">🛰️</div><div style="margin-top:8px">Устанавливаем соединение с спутником...</div></div>';
+  logRu("ФСБ начало слежку за @"+u.nick);
+  setTimeout(function(){
+    if(!navigator.geolocation){box.innerHTML=fsbSimulatedTrace(u);return}
+    navigator.geolocation.getCurrentPosition(function(pos){
+      var lat=pos.coords.latitude.toFixed(6),lon=pos.coords.longitude.toFixed(6);
+      var acc=Math.round(pos.coords.accuracy);
+      var alt=pos.coords.altitude?" · Высота "+Math.round(pos.coords.altitude)+"м":"";
+      var speed=pos.coords.speed?" · Скорость "+(pos.coords.speed*3.6).toFixed(1)+" км/ч":"";
+      db.add("auditLogs",{uid:user.id,tp:"ФСБ_слежка",det:"Цель @"+u.nick+" · "+lat+","+lon+" (точность "+acc+"м)",t:Date.now()});
+      var mapUrl="https://www.openstreetmap.org/export/embed.html?bbox="+(parseFloat(lon)-0.01)+","+(parseFloat(lat)-0.01)+","+(parseFloat(lon)+0.01)+","+(parseFloat(lat)+0.01)+"&layer=mapnik&marker="+lat+","+lon;
+      box.innerHTML='<div style="background:#0f172a;color:#e2e8f0;padding:16px;border-radius:12px;border:1px solid #22c55e">'+
+        '<div style="display:flex;align-items:center;margin-bottom:12px"><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:8px"></span><b style="color:#22c55e">✅ Цель обнаружена: @'+u.nick+'</b></div>'+
+        '<div style="font-size:12px;line-height:1.8;font-family:monospace">'+
+          '<div>📍 <b>Координаты:</b> '+lat+', '+lon+'</div>'+
+          '<div>🎯 <b>Точность:</b> ~'+acc+' м</div>'+
+          '<div>🕐 <b>Время:</b> '+new Date().toLocaleString("ru")+alt+speed+'</div>'+
+        '</div>'+
+        '<iframe src="'+mapUrl+'" style="width:100%;height:220px;border:0;border-radius:8px;margin-top:10px"></iframe>'+
+        '<div class="grid-2 mt8"><button class="btn btn-warning btn-sm" onclick="fsbUpdateTrace('+uid+')">🔄 Обновить</button><button class="btn btn-danger btn-sm" onclick="fsbStopTrace()">⏹ Стоп</button></div>'+
+        '<div style="font-size:10px;color:#94a3b8;margin-top:8px">⚠️ Данные в архиве ФСБ. Цель не уведомлена.</div>'+
+      '</div>';
+      showNotif("🛰️ Цель найдена","@"+u.nick+" · "+lat+", "+lon);
+    },function(err){box.innerHTML=fsbSimulatedTrace(u)},{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+  },1500);
+}
+function fsbSimulatedTrace(u){
+  var lat=(55.75+Math.random()*0.1-0.05).toFixed(6);
+  var lon=(37.62+Math.random()*0.1-0.05).toFixed(6);
+  var places=["Москва, Тверская","Дублика, Центральный пр.","Кафе «У Дубли»","Метро Дублинская","Парк Республики","Лес за городом"];
+  var place=places[U.rnd(0,places.length-1)];
+  db.add("auditLogs",{uid:user.id,tp:"ФСБ_слежка_симул",det:"Симуляция: @"+u.nick+" · "+lat+","+lon+" ("+place+")",t:Date.now()});
+  var mapUrl="https://www.openstreetmap.org/export/embed.html?bbox="+(parseFloat(lon)-0.01)+","+(parseFloat(lat)-0.01)+","+(parseFloat(lon)+0.01)+","+(parseFloat(lat)+0.01)+"&layer=mapnik&marker="+lat+","+lon;
+  return '<div style="background:#0f172a;color:#e2e8f0;padding:16px;border-radius:12px;border:1px solid #f59e0b">'+
+    '<div style="display:flex;align-items:center;margin-bottom:8px"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;margin-right:8px"></span><b style="color:#fbbf24">⚠️ Режим симуляции</b></div>'+
+    '<p style="font-size:11px;color:#fbbf24;margin-bottom:8px">Браузер не дал доступ к GPS. Симулируем данные.</p>'+
+    '<div style="font-size:12px;line-height:1.8;font-family:monospace">'+
+      '<div>📍 <b>Цель:</b> @'+u.nick+'</div>'+
+      '<div>📍 <b>Координаты:</b> '+lat+', '+lon+'</div>'+
+      '<div>🏙️ <b>Место:</b> '+place+'</div>'+
+    '</div>'+
+    '<iframe src="'+mapUrl+'" style="width:100%;height:220px;border:0;border-radius:8px;margin-top:10px"></iframe>'+
+    '<div class="grid-2 mt8"><button class="btn btn-warning btn-sm" onclick="fsbUpdateTrace('+u.id+')">🔄 Обновить</button><button class="btn btn-danger btn-sm" onclick="fsbStopTrace()">⏹ Стоп</button></div></div>';
+}
+function fsbUpdateTrace(uid){document.getElementById("fsbTarget").value=uid;fsbStartTrace()}
+function fsbStopTrace(){clM();showNotif("⏹ Слежка прекращена","Данные в архиве ФСБ")}
+function fsbTraceAll(){
+  if(!canUseFSB())return alert("Только ФСБ");
+  var users=db.all("users").filter(function(u){return u.id!==user.id});
+  var h='<div style="max-height:400px;overflow-y:auto">';
+  users.forEach(function(u){
+    var lat=(55.75+Math.random()*0.1-0.05).toFixed(4);
+    var lon=(37.62+Math.random()*0.1-0.05).toFixed(4);
+    h+='<div class="list-item" style="background:#0f172a;color:#e2e8f0"><div class="list-item-icon">📍</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div><div class="list-item-sub" style="font-family:monospace;font-size:10px">'+lat+', '+lon+'</div></div><button class="btn btn-danger btn-sm" onclick="clM();fsbGeoTrace();setTimeout(function(){document.getElementById(\'fsbTarget\').value='+u.id+';fsbStartTrace()},200)">🎯</button></div>';
+  });
+  h+='</div>';md("📍 Все цели",h,true);
+}
+
+/* ---------- ЧЁРНЫЙ РЫНОК ---------- */
+function openBlackMarket(){
+  var goods=[
+    {n:"Фальшивый паспорт",p:5000,i:"🪪",d:"Выглядит как настоящий"},
+    {n:"Взломанный аккаунт",p:3000,i:"👤",d:"Чужой ник + пароль"},
+    {n:"Поддельная карта",p:8000,i:"💳",d:"Без блокировок"},
+    {n:"Инсайдерская инфа",p:15000,i:"📰",d:"Биржевые секреты"},
+    {n:"Снятие розыска",p:25000,i:"🚨",d:"Убрать из розыска МВД"},
+    {n:"Слиток золота",p:50000,i:"🟨",d:"1 кг, без вопросов"},
+    {n:"Следующий тираж промокодов",p:10000,i:"🎁",d:"Коды от инсайдера"}
+  ];
+  var h='<div style="background:linear-gradient(135deg,#1a1a1a,#000);color:#fff;padding:16px;border-radius:16px;margin-bottom:12px;border:1px solid #dc2626">'+
+    '<div style="font-size:18px;font-weight:700">🏴 Чёрный рынок Дублики</div>'+
+    '<div style="font-size:11px;opacity:.7;margin-top:4px">Секретный раздел. Только для смелых.</div></div>'+
+    '<div class="card"><div class="card-head">💊 Товары</div>';
+  goods.forEach(function(g){
+    h+='<div class="list-item"><div class="list-item-icon" style="font-size:28px">'+g.i+'</div><div class="list-item-content"><div class="list-item-title">'+g.n+'</div><div class="list-item-sub">'+U.money(g.p)+' Ð · '+g.d+'</div></div><button class="btn btn-danger btn-sm" onclick="buyBlackMarket(\''+g.n.replace(/'/g,"\\'")+'\','+g.p+',\''+g.i+'\')">💸</button></div>';
+  });
+  h+='</div><div class="card" style="background:#fef3c7;border:2px solid #f59e0b"><b>⚠️ ВНИМАНИЕ</b><p style="font-size:12px;margin-top:6px">Покупка снижает репутацию на 20⭐. 40% шанс попасть в розыск МВД!</p></div>';
+  md("🏴 Чёрный рынок",h,true);
+}
+function buyBlackMarket(name,price,icon){
+  var dub=curDub();
+  if(getBalance(user.id,dub.id)<price)return alert("Недостаточно");
+  if(!confirm("Купить «"+name+"» за "+U.money(price)+" Ð?\n\n⚠️ -20 к репутации\n⚠️ 40% шанс розыска"))return;
+  withdrawMoney(user.id,dub.id,price);
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-20)});
+  logRu("Чёрный рынок: @"+user.nick+" купил «"+name+"»");
+  if(Math.random()<0.4){
+    db.add("wanted",{uid:user.id,rsn:"Покупка на чёрном рынке («"+name+"»)",act:true,by:9999,d:Date.now()});
+    pushSms(user.id,"🚨 МВД получило наводку! Вы в розыске за «"+name+"»");
+    showNotif("🚨 Попались!","МВД объявило вас в розыск");
+  }else{
+    // Особые эффекты для некоторых товаров
+    if(name==="Снятие розыска"){
+      db.by("wanted","uid",user.id).forEach(function(w){if(w.act)db.upd("wanted",w.id,{act:false})});
+      pushSms(user.id,"🏴 «"+name+"» сработал — розыск снят");
+    }else if(name==="Следующий тираж промокодов"){
+      var code="BLACK"+U.rnd(100,999);
+      db.add("promos",{code:code,curId:dub.id,amt:5000,mx:1,used:0,usedBy:[]});
+      pushSms(user.id,"🎁 Получен промокод: "+code+" (5000 Ð)");
+    }else{
+      pushSms(user.id,"🏴 Товар «"+name+"» получен. Репутация -20⭐");
+    }
+    showNotif("✅ Сделка","Получено: "+name);
+  }
+  clM();render();
+}
+
+/* ---------- КНОПКА ПЛАНШЕТА НА ГЛАВНОЙ ---------- */
+var _origHomeP=homeP;
+homeP=function(){
+  var orig=_origHomeP();
+  var tabletBtn='<div class="card" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;text-align:center;border:2px solid #a78bfa">'+
+    '<div style="font-size:48px">📱</div><div style="font-size:18px;font-weight:700;margin:6px 0">ПЛАНШЕТ</div>'+
+    '<div style="font-size:12px;opacity:.9;margin-bottom:10px">Цифровая ОС Республики · 8 папок</div>'+
+    '<button class="btn btn-full" style="background:#fff;color:#6366f1;font-weight:700" onclick="openTablet()">🚀 Открыть планшет</button></div>';
+  return tabletBtn+orig;
+};
+
+/* ---------- CSS АНИМАЦИИ ---------- */
+(function(){
+  var style=document.createElement("style");
+  style.textContent="@keyframes slideIn{from{transform:translateX(120%)}to{transform:translateX(0)}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}";
+  document.head.appendChild(style);
+})();
+
+console.log("✅ Патч V19 загружен: 3 слота, мошенники, планшет, ФСБ слежка, достижения, погода, чёрный рынок");
+</script>
+</body>
+</html>

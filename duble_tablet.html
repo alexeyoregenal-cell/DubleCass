@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DubleCass V20 — Tablet OS</title>
+    <style>
+        /* --- ОСНОВНЫЕ СТИЛИ И ТЕМЫ --- */
+        :root {
+            --bg-color: #f0f2f5;
+            --text-color: #1c1e21;
+            --card-bg: #ffffff;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --danger: #dc3545;
+            --success: #28a745;
+            --warning: #ffc107;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --card-bg: #1e1e1e;
+            --accent: #bb86fc;
+            --accent-hover: #9955e8;
+            --shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- ЭКРАН БЛОКИРОВКИ / ВЫБОР АККАУНТА --- */
+        #lock-screen, #account-manager {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s;
+        }
+        
+        .hidden { display: none !important; opacity: 0; pointer-events: none; }
+
+        .clock-widget { font-size: 4rem; font-weight: 300; margin-bottom: 20px; text-align: center; }
+        .date-widget { font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px; }
+
+        .acc-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .acc-slot {
+            width: 100px; height: 120px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+        .acc-slot:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .acc-avatar { width: 50px; height: 50px; background: var(--accent); border-radius: 50%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; }
+        .acc-name { font-size: 0.9rem; text-align: center; padding: 0 5px; word-break: break-word; }
+        .acc-create { border: 2px dashed var(--text-color); background: transparent; opacity: 0.7; }
+
+        /* --- ПЛАНШЕТ (РАБОЧИЙ СТОЛ) --- */
+        #tablet-os {
+            width: 100%; height: 100%;
+            max-width: 1024px; max-height: 768px;
+            background: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Статус бар */
+        .status-bar {
+            height: 30px;
+            background: rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 0.8rem;
+            z-index: 100;
+        }
+        .weather-badge { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+
+        /* Рабочий стол с папками */
+        .desktop {
+            flex: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            grid-auto-rows: 110px;
+            gap: 15px;
+            overflow-y: auto;
+            align-content: start;
+        }
+
+        .app-icon, .folder-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .app-icon:active, .folder-icon:active { transform: scale(0.95); }
+        
+        .icon-box {
+            width: 60px; height: 60px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #eee, #ddd);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 5px;
+            color: #333;
+        }
+        [data-theme="dark"] .icon-box { background: linear-gradient(135deg, #333, #444); color: #fff; }
+        
+        .icon-label { font-size: 0.75rem; text-align: center; line-height: 1.2; max-width: 100%; word-break: break-word; }
+
+        /* Цвета иконок приложений */
+        .icon-bank { background: linear-gradient(135deg, #007bff, #00c6ff); color: white; }
+        .icon-passport { background: linear-gradient(135deg, #8e44ad, #c0392b); color: white; }
+        .icon-mvd { background: linear-gradient(135deg, #2c3e50, #4ca1af); color: white; }
+        .icon-fsb { background: linear-gradient(135deg, #000000, #434343); color: white; }
+        .icon-court { background: linear-gradient(135deg, #f1c40f, #f39c12); color: white; }
+        .icon-dubligram { background: linear-gradient(135deg, #0088cc, #005f8f); color: white; }
+        .icon-market { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; }
+        .icon-casino { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .icon-business { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .icon-settings { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; }
+        .icon-browser { background: linear-gradient(135deg, #e67e22, #d35400); color: white; }
+        .icon-mail { background: linear-gradient(135deg, #f39c12, #d35400); color: white; }
+        .icon-avito { background: linear-gradient(135deg, #00AAFF, #0088cc); color: white; }
+        .icon-work { background: linear-gradient(135deg, #1abc9c, #16a085); color: white; }
+        .icon-land { background: linear-gradient(135deg, #27ae60, #1e8449); color: white; }
+        .icon-news { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+
+        /* Папки */
+        .folder-icon .icon-box { background: linear-gradient(135deg, #bdc3c7, #95a5a6); color: #333; }
+        .folder-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .folder-overlay.active { opacity: 1; pointer-events: all; }
+        .folder-content {
+            background: var(--card-bg);
+            width: 90%; max-width: 500px;
+            border-radius: 20px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .folder-overlay.active .folder-content { transform: scale(1); }
+        .folder-header { grid-column: 1 / -1; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .close-folder { cursor: pointer; font-size: 1.5rem; line-height: 1; }
+
+        /* Окно приложения */
+        .app-window {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            z-index: 60;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .app-window.open { transform: translateY(0); }
+        
+        .app-header {
+            height: 50px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .back-btn { font-size: 1.5rem; cursor: pointer; margin-right: 15px; color: var(--accent); }
+        .app-title { font-weight: bold; font-size: 1.1rem; flex: 1; text-align: center; }
+        .app-content { flex: 1; overflow-y: auto; padding: 15px; }
+
+        /* Уведомления */
+        #notification-area {
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--card-bg);
+            color: var(--text-color);
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex; align-items: center; gap: 10px;
+            animation: slideDown 0.3s ease-out forwards;
+            border-left: 5px solid var(--accent);
+            pointer-events: all;
+        }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Элементы форм и кнопок */
+        button {
+            background: var(--accent); color: white; border: none; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; font-size: 1rem; transition: background 0.2s;
+        }
+        button:hover { background: var(--accent-hover); }
+        button.danger { background: var(--danger); }
+        button.success { background: var(--success); }
+        
+        input, select, textarea {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            border-radius: 8px; border: 1px solid #ccc;
+            background: var(--card-bg); color: var(--text-color);
+            font-size: 1rem;
+        }
+        [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
+            border-color: #444;
+        }
+
+        /* Карточки внутри приложений */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+        .card h3 { margin-bottom: 10px; font-size: 1.1rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .stat-val { font-weight: bold; color: var(--accent); }
+
+        /* Специфичные стили для чата (ДублиГрамм) */
+        .chat-list-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer; }
+        .chat-list-item:hover { background: rgba(0,0,0,0.02); }
+        .chat-avatar { width: 40px; height: 40px; border-radius: 50%; background: #ccc; margin-right: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
+        .chat-info { flex: 1; }
+        .chat-name { font-weight: bold; font-size: 1rem; }
+        .chat-preview { font-size: 0.85rem; opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+        
+        .chat-view { display: flex; flex-direction: column; height: 100%; }
+        .messages-area { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .message { max-width: 70%; padding: 8px 12px; border-radius: 10px; font-size: 0.95rem; position: relative; }
+        .msg-in { background: var(--card-bg); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg-out { background: var(--accent); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg-time { font-size: 0.7rem; opacity: 0.7; text-align: right; margin-top: 4px; }
+        .chat-input-area { padding: 10px; background: var(--card-bg); display: flex; gap: 10px; }
+
+        /* Таблицы (Суд, МВД) */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1); }
+        th { font-size: 0.85rem; opacity: 0.7; }
+        
+        /* Анимации */
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .pop-in { animation: popIn 0.3s ease-out; }
+
+    </style>
+</head>
+<body>
+
+<!-- УВЕДОМЛЕНИЯ -->
+<div id="notification-area"></div>
+
+<!-- ЭКРАН ВЫБОРА АККАУНТА -->
+<div id="account-manager">
+    <div class="clock-widget" id="lock-clock">00:00</div>
+    <div class="date-widget" id="lock-date">Загрузка...</div>
+    
+    <h2 style="margin-bottom: 20px;">Выберите аккаунт</h2>
+    <div class="acc-grid" id="acc-slots-container">
+        <!-- Слоты генерируются JS -->
+    </div>
+    
+    <div style="margin-top: 30px; opacity: 0.6; font-size: 0.8rem;">
+        Promo: <input type="text" id="promo-input" placeholder="Введите код" style="width: 150px; padding: 5px; margin: 0; display: inline-block;">
+        <button onclick="checkPromo()" style="padding: 5px 10px; font-size: 0.8rem;">OK</button>
+    </div>
+</div>
+
+<!-- ОСНОВНОЙ ПЛАНШЕТ -->
+<div id="tablet-os" class="hidden">
+    <!-- Статус бар -->
+    <div class="status-bar">
+        <div id="sb-carrier">DubleNet 5G</div>
+        <div class="weather-badge" onclick="openApp('weather-app')">
+            <span id="sb-weather-icon">☀️</span>
+            <span id="sb-weather-temp">--°C</span>
+        </div>
+        <div id="sb-battery">🔋 100%</div>
+    </div>
+
+    <!-- Рабочий стол -->
+    <div class="desktop" id="main-desktop">
+        <!-- Иконки генерируются JS -->
+    </div>
+
+    <!-- Оверлей папки -->
+    <div class="folder-overlay" id="folder-overlay">
+        <div class="folder-content" id="folder-content-box">
+            <div class="folder-header">
+                <span id="folder-title">Папка</span>
+                <span class="close-folder" onclick="closeFolder()">×</span>
+            </div>
+            <!-- Иконки внутри папки -->
+        </div>
+    </div>
+
+    <!-- Окно приложения -->
+    <div class="app-window" id="app-window">
+        <div class="app-header">
+            <div class="back-btn" onclick="closeApp()">❮</div>
+            <div class="app-title" id="app-title-text">Приложение</div>
+            <div style="width: 24px;"></div> <!-- Spacer -->
+        </div>
+        <div class="app-content" id="app-content-box">
+            <!-- Контент приложения -->
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * DUBLECASS V20 CORE SYSTEM
+ * Полная симуляция ОС планшета без сервера (Local Storage)
+ */
+
+// --- КОНФИГУРАЦИЯ И СОСТОЯНИЕ ---
+const DB_KEY = 'duble_os_v20_db';
+const CONFIG = {
+    startRating: 10000,
+    pensionFund: 0,
+    taxRate: 0.13, // 13% по умолчанию
+    minBalance: 3500, // Неприкосновенный минимум
+    fraudThreshold: 3000,
+    adminCode: 'ADMIN'
+};
+
+// Структура данных по умолчанию
+const defaultDB = {
+    accounts: [
+        { id: 1, name: '', surname: '', passport: null, rating: CONFIG.startRating, balance: 50000, cards: [], active: false },
+        { id: 2, name: '', surname: '', passport: null, rating: CONFIG.startRating, balance: 50000, cards: [], active: false },
+        { id: 3, name: '', surname: '', passport: null, rating: CONFIG.startRating, balance: 50000, cards: [], active: false }
+    ],
+    currentUserId: null,
+    isAdmin: false,
+    weather: { temp: 20, icon: '☀️', desc: 'Ясно' },
+    chats: [], // ДублиГрамм
+    apps: [], // Установленные приложения
+    news: [],
+    courtCases: [],
+    landRegistry: [],
+    businesses: [],
+    logs: []
+};
+
+let db = loadDB();
+let currentFolder = null;
+
+// --- СИСТЕМНЫЕ ФУНКЦИИ ---
+
+function loadDB() {
+    const saved = localStorage.getItem(DB_KEY);
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    saveDB(defaultDB);
+    return defaultDB;
+}
+
+function saveDB(data) {
+    db = data;
+    localStorage.setItem(DB_KEY, JSON.stringify(data));
+}
+
+function notify(msg, type = 'info') {
+    const area = document.getElementById('notification-area');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.borderLeftColor = type === 'error' ? 'var(--danger)' : (type === 'success' ? 'var(--success)' : 'var(--accent)');
+    toast.innerHTML = `<span>${msg}</span>`;
+    area.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function updateClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+    
+    const clockEl = document.getElementById('lock-clock');
+    const dateEl = document.getElementById('lock-date');
+    
+    if(clockEl) clockEl.innerText = timeStr;
+    if(dateEl) dateEl.innerText = dateStr;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// --- МЕНЕДЖЕР АККАУНТОВ ---
+
+function renderAccountManager() {
+    const container = document.getElementById('acc-slots-container');
+    container.innerHTML = '';
+    
+    db.accounts.forEach((acc, index) => {
+        const slot = document.createElement('div');
+        slot.className = 'acc-slot';
+        if (!acc.name) slot.classList.add('acc-create');
+        
+        const initial = acc.name ? acc.name[0].toUpperCase() : '+';
+        const label = acc.name ? `${acc.surname || ''} ${acc.name}` : 'Создать';
+        
+        slot.innerHTML = `
+            <div class="acc-avatar">${initial}</div>
+            <div class="acc-name">${label}</div>
+        `;
+        
+        slot.onclick = () => {
+            if (acc.name) {
+                login(index);
+            } else {
+                createAccount(index);
+            }
+        };
+        container.appendChild(slot);
+    });
+}
+
+function createAccount(index) {
+    const name = prompt("Введите имя (обязательно):");
+    if (!name) return;
+    
+    let surname = prompt("Введите фамилию (необязательно, по умолчанию 'Дубли'):");
+    if (!surname || surname.trim() === '') {
+        // Логика авто-фамилии
+        const baseName = "Дубли";
+        let finalSurname = baseName;
+        let counter = 1;
+        
+        // Проверка занятости
+        while (db.accounts.some(a => a.surname === finalSurname && a.id !== db.accounts[index].id)) {
+            finalSurname = `${baseName}${counter}`;
+            counter++;
+        }
+        surname = finalSurname;
+        notify(`Фамилия автоматически назначена: ${surname}`);
+    }
+
+    const birthDate = prompt("Дата рождения (ДД.ММ.ГГГГ):");
+    if (!birthDate) {
+        alert("Дата рождения обязательна!");
+        return;
+    }
+
+    db.accounts[index].name = name;
+    db.accounts[index].surname = surname;
+    db.accounts[index].rating = CONFIG.startRating;
+    db.accounts[index].balance = 10000; // Стартовый капитал
+    
+    // Генерация паспорта если нет
+    if (!db.accounts[index].passport) {
+        const pNum = Math.floor(Math.random() * 9000000000) + 1000000000;
+        db.accounts[index].passport = { number: pNum, issueDate: new Date().toLocaleDateString() };
+    }
+
+    saveDB(db);
+    renderAccountManager();
+    notify("Аккаунт создан!", "success");
+}
+
+function login(index) {
+    db.currentUserId = index;
+    db.accounts[index].active = true;
+    saveDB(db);
+    
+    document.getElementById('account-manager').classList.add('hidden');
+    document.getElementById('tablet-os').classList.remove('hidden');
+    
+    initDesktop();
+    checkFraudsters();
+    generateNewsIfNeeded();
+    notify(`Добро пожаловать, ${db.accounts[index].name}!`, "success");
+}
+
+function logout() {
+    if (db.currentUserId !== null) {
+        db.accounts[db.currentUserId].active = false;
+    }
+    db.currentUserId = null;
+    saveDB(db);
+    location.reload();
+}
+
+function checkPromo() {
+    const code = document.getElementById('promo-input').value.trim();
+    if (code === CONFIG.adminCode) {
+        db.isAdmin = true;
+        saveDB(db);
+        notify("Режим АДМИНИСТРАТОРА включен", "success");
+        setTimeout(() => location.reload(), 1000);
+    } else {
+        notify("Неверный промокод", "error");
+    }
+}
+
+// --- РАБОЧИЙ СТОЛ И ПРИЛОЖЕНИЯ ---
+
+const APPS_REGISTRY = [
+    { id: 'bank-app', name: 'Мой Банк', icon: '🏦', class: 'icon-bank', folder: 'Финансы' },
+    { id: 'passport-app', name: 'Паспорт', icon: '🪪', class: 'icon-passport', folder: 'Госуслуги' },
+    { id: 'mvd-app', name: 'МВД', icon: '👮', class: 'icon-mvd', folder: 'Спецслужбы' },
+    { id: 'fsb-app', name: 'ФСБ', icon: '🕵️', class: 'icon-fsb', folder: 'Спецслужбы' },
+    { id: 'court-app', name: 'Суд', icon: '⚖️', class: 'icon-court', folder: 'Госуслуги' },
+    { id: 'dubligram-app', name: 'ДублиГрамм', icon: '✈️', class: 'icon-dubligram', folder: 'Соцсети' },
+    { id: 'market-app', name: 'ДублиПлей', icon: '🛍️', class: 'icon-market', folder: 'Развлечения' },
+    { id: 'casino-app', name: 'Казино', icon: '🎰', class: 'icon-casino', folder: 'Развлечения' },
+    { id: 'business-app', name: 'Бизнес', icon: '💼', class: 'icon-business', folder: 'Работа' },
+    { id: 'work-app', name: 'hh.du', icon: '📄', class: 'icon-work', folder: 'Работа' },
+    { id: 'browser-app', name: 'ДублиНет', icon: '🌐', class: 'icon-browser', folder: 'Интернет' },
+    { id: 'mail-app', name: 'Почта', icon: '📧', class: 'icon-mail', folder: 'Интернет' },
+    { id: 'avito-app', name: 'Авито', icon: '📢', class: 'icon-avito', folder: 'Интернет' },
+    { id: 'land-app', name: 'Земля', icon: '🗺️', class: 'icon-land', folder: 'Госуслуги' },
+    { id: 'news-app', name: 'Новости', icon: '📰', class: 'icon-news', folder: 'Интернет' },
+    { id: 'settings-app', name: 'Настройки', icon: '⚙️', class: 'icon-settings', folder: 'Система' }
+];
+
+const FOLDERS = ['Работа', 'Госуслуги', 'Соцсети', 'Интернет', 'Финансы', 'Развлечения', 'Спецслужбы', 'Система'];
+
+function initDesktop() {
+    const desktop = document.getElementById('main-desktop');
+    desktop.innerHTML = '';
+
+    // Создаем иконки папок
+    FOLDERS.forEach(folderName => {
+        const hasApps = APPS_REGISTRY.some(app => app.folder === folderName);
+        if (!hasApps) return;
+
+        const folderEl = document.createElement('div');
+        folderEl.className = 'folder-icon';
+        folderEl.innerHTML = `
+            <div class="icon-box">📁</div>
+            <div class="icon-label">${folderName}</div>
+        `;
+        folderEl.onclick = () => openFolder(folderName);
+        desktop.appendChild(folderEl);
+    });
+
+    // Создаем иконки приложений вне папок (если нужно, но по ТЗ все в папках)
+    // Для примера оставим только папки на рабочем столе
+}
+
+function openFolder(name) {
+    currentFolder = name;
+    const overlay = document.getElementById('folder-overlay');
+    const content = document.getElementById('folder-content-box');
+    const title = document.getElementById('folder-title');
+    
+    title.innerText = name;
+    // Очищаем старые иконки кроме заголовка
+    const oldIcons = content.querySelectorAll('.app-icon');
+    oldIcons.forEach(el => el.remove());
+
+    const apps = APPS_REGISTRY.filter(app => app.folder === name);
+    apps.forEach(app => {
+        const icon = document.createElement('div');
+        icon.className = 'app-icon';
+        icon.innerHTML = `
+            <div class="icon-box ${app.class}">${app.icon}</div>
+            <div class="icon-label">${app.name}</div>
+        `;
+        icon.onclick = () => {
+            closeFolder();
+            openApp(app.id);
+        };
+        content.appendChild(icon);
+    });
+
+    overlay.classList.add('active');
+}
+
+function closeFolder() {
+    document.getElementById('folder-overlay').classList.remove('active');
+    currentFolder = null;
+}
+
+function openApp(appId) {
+    const app = APPS_REGISTRY.find(a => a.id === appId);
+    if (!app) return;
+
+    const win = document.getElementById('app-window');
+    const title = document.getElementById('app-title-text');
+    const content = document.getElementById('app-content-box');
+
+    title.innerText = app.name;
+    content.innerHTML = ''; // Очистка
+    win.classList.add('open');
+
+    renderAppContent(appId, content);
+}
+
+function closeApp() {
+    document.getElementById('app-window').classList.remove('open');
+    setTimeout(() => {
+        document.getElementById('app-content-box').innerHTML = '';
+    }, 300);
+}
+
+// --- РЕНДЕРИНГ КОНТЕНТА ПРИЛОЖЕНИЙ ---
+
+function renderAppContent(appId, container) {
+    const user = db.accounts[db.currentUserId];
+
+    switch(appId) {
+        case 'bank-app':
+            container.innerHTML = `
+                <div class="card pop-in">
+                    <h3>💳 Моя карта</h3>
+                    <div class="stat-row"><span>Баланс:</span> <span class="stat-val">${user.balance.toFixed(2)} Ð</span></div>
+                    <div class="stat-row"><span>Рейтинг:</span> <span class="stat-val">${user.rating}</span></div>
+                    <p style="font-size:0.8rem; opacity:0.7; margin-top:5px;">Номер: **** **** ${Math.floor(Math.random()*9000)+1000}</p>
+                </div>
+                <div class="card pop-in">
+                    <h3>Переводы</h3>
+                    <input type="text" placeholder="Номер карты или @ник">
+                    <input type="number" placeholder="Сумма">
+                    <button onclick="bankTransfer()">Отправить</button>
+                </div>
+                <div class="card pop-in">
+                    <h3>Благотворительность</h3>
+                    <p>10 000 Ð = +1 рейтинг (в Пенсионный фонд)</p>
+                    <button class="success" onclick="donate()">Пожертвовать 10 000 Ð</button>
+                </div>
+            `;
+            break;
+
+        case 'passport-app':
+            const p = user.passport;
+            container.innerHTML = `
+                <div class="card pop-in" style="background: linear-gradient(135deg, #8e44ad, #c0392b); color: white;">
+                    <h3>ПАСПОРТ ГРАЖДАНИНА</h3>
+                    <p><strong>Фамилия:</strong> ${user.surname || 'Не указана'}</p>
+                    <p><strong>Имя:</strong> ${user.name}</p>
+                    <p><strong>Дата рождения:</strong> ${p ? 'Указана' : 'Не указана'}</p>
+                    <p><strong>Номер:</strong> ${p ? p.number : 'Нет'}</p>
+                    <p><strong>Рейтинг:</strong> ${user.rating}</p>
+                </div>
+                ${!p ? '<button onclick="applyPassport()">Подать заявление на паспорт</button>' : ''}
+            `;
+            break;
+
+        case 'dubligram-app':
+            container.innerHTML = `
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <input type="text" placeholder="Поиск по @нику" style="margin:0;">
+                    <button>🔍</button>
+                </div>
+                <div id="chat-list">
+                    <!-- Список чатов -->
+                    <div class="chat-list-item" onclick="openChat('Администрация')">
+                        <div class="chat-avatar" style="background:#0088cc">A</div>
+                        <div class="chat-info">
+                            <div class="chat-name">Администрация</div>
+                            <div class="chat-preview">Добро пожаловать в DubleGramm!</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="active-chat-view" class="hidden chat-view" style="position:absolute; top:0; left:0; width:100%; height:100%; background:var(--bg-color); z-index:5;">
+                    <div class="app-header"><div class="back-btn" onclick="closeChatView()">❮</div><div class="app-title" id="chat-title">Чат</div></div>
+                    <div class="messages-area" id="msg-area"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="msg-input" placeholder="Сообщение..." style="margin:0;">
+                        <button onclick="sendMessage()">➤</button>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'mvd-app':
+            if (!db.isAdmin && user.rating < 5000) { // Условный доступ
+                 container.innerHTML = `<div class="card"><h3>Доступ ограничен</h3><p>Требуется высокий рейтинг или права администратора.</p></div>`;
+            } else {
+                container.innerHTML = `
+                    <div class="card pop-in">
+                        <h3>👮 Панель МВД</h3>
+                        <p>Поиск гражданина:</p>
+                        <input type="text" placeholder="ФИО или Номер паспорта">
+                        <button onclick="notify('Гражданин найден (симуляция)')">Найти</button>
+                    </div>
+                    <div class="card pop-in">
+                        <h3>Розыск</h3>
+                        <table><thead><tr><th>ФИО</th><th>Причина</th></tr></thead><tbody><tr><td>Иванов И.И.</td><td>Неуплата налогов</td></tr></tbody></table>
+                    </div>
+                `;
+            }
+            break;
+
+        case 'fsb-app':
+             container.innerHTML = `
+                <div class="card pop-in" style="border: 1px solid #333;">
+                    <h3>🕵️ Панель ФСБ</h3>
+                    <p>Слежка за геолокацией...</p>
+                    <div style="height:100px; background:#000; color:#0f0; font-family:monospace; padding:10px; font-size:0.8rem;">
+                        TARGET: ${user.name}<br>
+                        LAT: ${45.0 + Math.random()}<br>
+                        LON: ${35.0 + Math.random()}<br>
+                        STATUS: ACTIVE
+                    </div>
+                    <button class="danger" style="margin-top:10px;" onclick="notify('Данные отправлены в архив')">Скачать лог</button>
+                </div>
+             `;
+             break;
+
+        case 'casino-app':
+            container.innerHTML = `
+                <div class="card pop-in" style="text-align:center;">
+                    <h3>🎰 Казино "Удача"</h3>
+                    <p>Баланс: ${user.balance} Ð</p>
+                    <div style="font-size:3rem; margin:20px;">🍒 🍋 🔔</div>
+                    <button class="success" onclick="playCasino()">Крутить (1000 Ð)</button>
+                    <p style="font-size:0.7rem; margin-top:10px; color:var(--danger)">Шанс выигрыша: 40%. Дом всегда в плюсе.</p>
+                </div>
+            `;
+            break;
+
+        case 'settings-app':
+            container.innerHTML = `
+                <div class="card pop-in">
+                    <h3>⚙️ Настройки</h3>
+                    <div class="stat-row">
+                        <span>Тёмная тема</span>
+                        <button onclick="toggleTheme()" style="padding:5px 10px; font-size:0.8rem;">Переключить</button>
+                    </div>
+                    <hr style="margin:10px 0; border:0; border-top:1px solid #ccc;">
+                    ${db.isAdmin ? `
+                    <div class="stat-row">
+                        <span>Экспорт базы (Admin)</span>
+                        <button onclick="exportDB()">Скачать JSON</button>
+                    </div>
+                    <div class="stat-row" style="margin-top:10px;">
+                        <span>Импорт базы (Admin)</span>
+                        <input type="file" id="import-file" style="width:auto; margin:0;">
+                        <button onclick="importDB()" style="padding:5px 10px; font-size:0.8rem;">Загрузить</button>
+                    </div>
+                    ` : ''}
+                    <hr style="margin:10px 0; border:0; border-top:1px solid #ccc;">
+                    <button class="danger" onclick="logout()">Выйти из аккаунта</button>
+                </div>
+            `;
+            break;
+            
+        // Заглушки для остальных приложений для краткости, но структура готова
+        default:
+            container.innerHTML = `<div class="card"><h3>${APPS_REGISTRY.find(a=>a.id===appId).name}</h3><p>Раздел в разработке...</p></div>`;
+    }
+}
+
+// --- ЛОГИКА ПРИЛОЖЕНИЙ ---
+
+function bankTransfer() {
+    const user = db.accounts[db.currentUserId];
+    const amount = parseFloat(prompt("Сумма перевода:"));
+    if (isNaN(amount) || amount <= 0) return notify("Неверная сумма", "error");
+    if (user.balance < amount) return notify("Недостаточно средств", "error");
+    
+    user.balance -= amount;
+    // В реальной версии нужно найти получателя
+    notify(`Перевод на сумму ${amount} Ð выполнен!`, "success");
+    saveDB(db);
+    renderAppContent('bank-app', document.getElementById('app-content-box'));
+}
+
+function donate() {
+    const user = db.accounts[db.currentUserId];
+    if (user.balance < 10000) return notify("Недостаточно средств (нужно 10 000)", "error");
+    
+    user.balance -= 10000;
+    user.rating += 1;
+    db.pensionFund = (db.pensionFund || 0) + 10000;
+    
+    notify("Спасибо за благотворительность! Рейтинг +1", "success");
+    saveDB(db);
+    renderAppContent('bank-app', document.getElementById('app-content-box'));
+}
+
+function applyPassport() {
+    const user = db.accounts[db.currentUserId];
+    const num = Math.floor(Math.random() * 9000000000) + 1000000000;
+    user.passport = { number: num, issueDate: new Date().toLocaleDateString() };
+    saveDB(db);
+    notify("Паспорт получен!", "success");
+    renderAppContent('passport-app', document.getElementById('app-content-box'));
+}
+
+// Чат логика
+let currentChatName = '';
+function openChat(name) {
+    currentChatName = name;
+    document.getElementById('active-chat-view').classList.remove('hidden');
+    document.getElementById('chat-title').innerText = name;
+    const area = document.getElementById('msg-area');
+    area.innerHTML = `<div class="message msg-in">Привет! Это тестовый чат с ${name}.</div>`;
+}
+function closeChatView() {
+    document.getElementById('active-chat-view').classList.add('hidden');
+}
+function sendMessage() {
+    const input = document.getElementById('msg-input');
+    const txt = input.value.trim();
+    if(!txt) return;
+    
+    const area = document.getElementById('msg-area');
+    const msgEl = document.createElement('div');
+    msgEl.className = 'message msg-out';
+    msgEl.innerHTML = `${txt}<div class="msg-time">${new Date().toLocaleTimeString()}</div>`;
+    area.appendChild(msgEl);
+    input.value = '';
+    area.scrollTop = area.scrollHeight;
+    
+    // Автоответ
+    setTimeout(() => {
+        const reply = document.createElement('div');
+        reply.className = 'message msg-in';
+        reply.innerText = "Я бот, пока не умею отвечать умно.";
+        area.appendChild(reply);
+        area.scrollTop = area.scrollHeight;
+    }, 1000);
+}
+
+function playCasino() {
+    const user = db.accounts[db.currentUserId];
+    const bet = 1000;
+    if (user.balance < bet) return notify("Нет денег на ставку!", "error");
+    
+    user.balance -= bet;
+    const win = Math.random() > 0.6; // 40% шанс
+    
+    if (win) {
+        const prize = bet * 2;
+        user.balance += prize;
+        notify(`Выигрыш! +${prize} Ð`, "success");
+    } else {
+        notify("Вы проиграли.", "error");
+    }
+    saveDB(db);
+    renderAppContent('casino-app', document.getElementById('app-content-box'));
+}
+
+function toggleTheme() {
+    const body = document.body;
+    const isDark = body.getAttribute('data-theme') === 'dark';
+    body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+}
+
+function exportDB() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "duble_backup.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
+function importDB() {
+    const file = document.getElementById('import-file').files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const imported = JSON.parse(e.target.result);
+            saveDB(imported);
+            notify("База восстановлена! Перезагрузка...", "success");
+            setTimeout(() => location.reload(), 1000);
+        } catch(err) {
+            notify("Ошибка файла", "error");
+        }
+    };
+    reader.readAsText(file);
+}
+
+function checkFraudsters() {
+    const user = db.accounts[db.currentUserId];
+    if (user.balance < CONFIG.fraudThreshold && user.balance > 0) {
+        setTimeout(() => {
+            if(confirm("Мошенники предлагают схему заработка. Риск ареста 50%. Согласны?")) {
+                if(Math.random() > 0.5) {
+                    user.balance += 5000;
+                    notify("Схема сработала! +5000 Ð", "success");
+                } else {
+                    user.balance = 0;
+                    user.rating = 0;
+                    notify("Вас поймали! Баланс обнулен, рейтинг 0.", "error");
+                    // Тут можно добавить логику тюрьмы
+                }
+                saveDB(db);
+            }
+        }, 5000);
+    }
+}
+
+function generateNewsIfNeeded() {
+    if (db.news.length < 5) {
+        const fakeNews = ["Курс рубля стабилен", "Новый закон принят", "Погода улучшится", "Открытие нового парка"];
+        fakeNews.forEach(n => db.news.push({title: n, date: new Date().toLocaleDateString()}));
+        saveDB(db);
+    }
+}
+
+// Геолокация погоды
+function fetchWeather() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            // Симуляция реальной погоды на основе координат (в реале нужен API)
+            const temp = Math.floor(Math.random() * 30) + 10;
+            db.weather = { temp: temp, icon: temp > 20 ? '☀️' : '☁️', desc: 'Реальная локация' };
+            saveDB(db);
+            updateWeatherUI();
+        }, () => {
+            // Ошибка или отказ
+            updateWeatherUI();
+        });
+    } else {
+        updateWeatherUI();
+    }
+}
+
+function updateWeatherUI() {
+    const w = db.weather;
+    document.getElementById('sb-weather-temp').innerText = `${w.temp}°C`;
+    document.getElementById('sb-weather-icon').innerText = w.icon;
+}
+
+// --- ЗАПУСК ---
+window.onload = () => {
+    renderAccountManager();
+    fetchWeather();
+};
+
+</script>
+</body>
+</html>
