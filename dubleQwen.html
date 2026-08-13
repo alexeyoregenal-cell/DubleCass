@@ -150,8 +150,13 @@ var db={d:null,init:function(){this.d=JSON.parse(localStorage.getItem("dc20")||"
 var U={gId:function(){var r="";for(var i=0;i<10;i++)r+=Math.floor(Math.random()*10);return r},gCard:function(){var r="";for(var i=0;i<16;i++)r+=Math.floor(Math.random()*10);return r},hash:function(p){var h=0;for(var i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h=h&h}return h.toString(16)},money:function(a){return(a||0).toFixed(2)},rnd:function(a,b){return Math.floor(Math.random()*(b-a+1))+a},fCard:function(n){return n?n.replace(/(.{4})/g,"$1 ").trim():""}};
 
 var COUNTRY={name:"РЕСПУБЛИКА ДУБЛИКА",short:"DUBLIKA"};
-var user=null,tab="home",currentSlot=0,weatherData=null,geoWatchId=null;
+var user=null,tab="home",currentSlot=0,weatherData=null,geoWatchId=null,weatherShown=false;
 db.init();
+
+/* ==================== РЕЙТИНГ (старт 10000) ==================== */
+// Рейтинг стартует с 10000, а не 100
+function getRep(){return user?(user.rep||10000):100}
+function setRep(v){if(user){user.rep=Math.max(0,v);db.upd("users",user.id,{rep:user.rep})}}
 
 /* ==================== ВАЛЮТЫ ==================== */
 if(db.cnt("currencies")==0){
@@ -277,7 +282,7 @@ function createSlot(i){
   if(!nick||nick.trim().length<2)return;nick=nick.trim();
   if(db.one("users","nick",nick)){alert("Ник занят");return}
   var pw=prompt("Пароль (мин 4):");if(!pw||pw.length<4)return alert("Мин 4 символа");
-  var uid=db.add("users",{nick:nick,pwh:U.hash(pw),adm:false,blk:false,accB:false,ph:"👤",rep:100});
+  var uid=db.add("users",{nick:nick,pwh:U.hash(pw),adm:false,blk:false,accB:false,ph:"👤",rep:10000});
   var dub=curDub();if(dub)giveDenoms(uid,dub.id,5000);
   db.add("creditHistory",{userId:uid,score:100,recs:[]});
   if(db.d.aid===null){db.d.aid=uid;db.upd("users",uid,{adm:true})}
@@ -310,7 +315,7 @@ function scamAccept(){
   var dub=curDub();if(getBalance(user.id,dub.id)<500)return alert("Недостаточно");
   withdrawMoney(user.id,dub.id,500);
   localStorage.setItem("scam_"+user.id,"1");
-  db.upd("users",user.id,{rep:Math.max(0,(user.rep||100)-10)});
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-10)});
   clM();
   // 30% шанс что мошенник спалится
   if(Math.random()<0.3){
@@ -326,7 +331,7 @@ function scamAccept(){
 function scamReport(){
   localStorage.setItem("scam_"+user.id,"1");
   db.add("wanted",{uid:9999,rsn:"Мошенничество (заявление @"+user.nick+")",act:true,by:user.id,d:Date.now()});
-  db.upd("users",user.id,{rep:Math.min(200,(user.rep||100)+5)});
+  db.upd("users",user.id,{rep:Math.min(200,(user.rep||10000)+5)});
   clM();
   pushSms(user.id,"🚨 Заявление принято! Мошенник в розыске. +5 к репутации");
   alert("Молодец! Мошенник в розыске.");
@@ -338,7 +343,13 @@ function scamIgnore(){localStorage.setItem("scam_"+user.id,"1");clM();render()}
 function hdr(){
   var w=getWeather();
   var p=db.one("passports","userId",user.id);
-  return '<div class="header"><div class="header-title">🏦 DubleCass V19</div><div class="header-sub">@'+user.nick+(isW(user.id)?' <span class="wanted">🚨 РОЗЫСК</span>':'')+(user.adm?' <span class="badge badge-admin">👑</span>':'')+'</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">'+(w?w.cond+" "+w.temp+"°C":"")+'</span><span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">⭐ '+(user.rep||100)+'</span><button class="btn btn-dark btn-sm" onclick="backToSlots()">🔄</button></div></div>';
+  // Показываем погоду только один раз за сессию
+  var weatherHtml = "";
+  if(!weatherShown && w){
+    weatherHtml = '<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">'+w.cond+" "+w.temp+"°C</span>";
+    weatherShown = true;
+  }
+  return '<div class="header"><div class="header-title">🏦 DubleCass V20</div><div class="header-sub">@'+user.nick+(isW(user.id)?' <span class="wanted">🚨 РОЗЫСК</span>':'')+(user.adm?' <span class="badge badge-admin">👑</span>':'')+'</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+weatherHtml+'<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">⭐ '+(user.rep||10000)+'</span><button class="btn btn-dark btn-sm" onclick="backToSlots()">🔄</button></div></div>';
 }
 function tabsH(){
   var t=[["pass","🪪","Паспорт"],["home","🏠","Главная"],["fact","🏛️","Орг-ции"],["card","💳","Карта"],["bank","🏦","Банк"],["stock","📈","Биржа"],["casino","🎰","Казино"],["chat","💬","Чат"],["people","👥","Люди"],["prof","👤","Профиль"]];
@@ -563,17 +574,62 @@ function sendAI(){var txt=document.getElementById("aiMsg").value.trim();if(!txt)
 function aiThink(q){var dub=curDub();var bal=getBalance(user.id,dub.id);q=q.toLowerCase();if(q.indexOf("привет")>=0)return"Привет! 👋 Чем помочь?";if(q.indexOf("баланс")>=0)return"💰 Баланс: "+U.money(bal)+" Ð";if(q.indexOf("курс")>=0)return"💱 Курс: 1€ = "+getRate()+" Ð";if(q.indexOf("казино")>=0)return"🎰 Игры: слоты, рулетка, кости, монетка, краш, мины";if(q.indexOf("спасибо")>=0)return"Всегда пожалуйста! 😊";return"🤔 Спроси о: баланс, курс, казино"}
 
 /* ==================== ЛЮДИ ==================== */
-function peopleP(){var us=db.all("users");var h='<div class="card"><div class="card-head">👥 Граждане</div>';us.forEach(function(u){h+='<div class="list-item" onclick="vPers('+u.id+')"><div class="list-item-icon">'+(u.ph||"👤")+'</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div><div class="list-item-sub">⭐ '+(u.rep||100)+'</div></div></div>'});h+='</div>';return h}
-function vPers(uid){var u=db.get("users",uid);md("👤 @"+u.nick,'<div style="text-align:center;font-size:60px">'+(u.ph||"👤")+'</div><div style="text-align:center;font-weight:700">@'+u.nick+'</div><div class="info-row"><span>Репутация</span><span>⭐ '+(u.rep||100)+'</span></div><div class="info-row"><span>Админ</span><span>'+(u.adm?"Да":"Нет")+'</span></div>'+(uid!==user.id?'<button class="btn btn-success btn-full mt8" onclick="clM();go(\'people\')">Назад</button>':''))}
+function peopleP(){var us=db.all("users");var h='<div class="card"><div class="card-head">👥 Граждане</div>';us.forEach(function(u){h+='<div class="list-item" onclick="vPers('+u.id+')"><div class="list-item-icon">'+(u.ph||"👤")+'</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div><div class="list-item-sub">⭐ '+(u.rep||10000)+'</div></div></div>'});h+='</div>';return h}
+function vPers(uid){var u=db.get("users",uid);md("👤 @"+u.nick,'<div style="text-align:center;font-size:60px">'+(u.ph||"👤")+'</div><div style="text-align:center;font-weight:700">@'+u.nick+'</div><div class="info-row"><span>Репутация</span><span>⭐ '+(user.rep||10000)+'</span></div><div class="info-row"><span>Админ</span><span>'+(u.adm?"Да":"Нет")+'</span></div>'+(uid!==user.id?'<button class="btn btn-success btn-full mt8" onclick="clM();go(\'people\')">Назад</button>':''))}
 
-/* ==================== ПРОФИЛЬ ==================== */
-function profP(){var dub=curDub();var bal=dub?getBalance(user.id,dub.id):0;var achs=db.by("achievements","uid",user.id);var h='<div class="card" style="text-align:center"><div style="font-size:60px">'+(user.ph||"👤")+'</div><div style="font-size:20px;font-weight:700">@'+user.nick+'</div><div style="font-size:11px;color:#64748b">ID: '+user.id+'</div><div style="margin-top:8px"><span class="stat-pill">⭐ '+(user.rep||100)+'</span><span class="stat-pill">'+achs.length+' 🏆</span></div></div>';
-h+='<div class="card"><div class="card-head">💰 Баланс</div><div class="info-row"><span>Дубли</span><span>'+U.money(bal)+' Ð</span></div></div>';
-h+='<div class="card"><div class="card-head">🏆 Достижения ('+achs.length+')</div>';
-if(achs.length){achs.slice().reverse().forEach(function(a){h+='<div class="achievement"><div style="font-size:28px">'+a.icon+'</div><div style="flex:1"><div style="font-weight:700">'+a.name+'</div><div style="font-size:11px">'+a.desc+'</div></div></div>'})}else h+='<p style="color:#6b7280;font-size:12px">Пока нет достижений</p>';
-h+='</div>';
-h+='<button class="btn btn-warning btn-full" onclick="chPw()">🔐 Сменить пароль</button><button class="btn btn-danger btn-full mt8" onclick="out()">🚪 Выйти</button>';
-return h}
+/* ==================== ПРОФИЛЬ + БЛАГОТВОРИТЕЛЬНОСТЬ / ПЕНСИЯ ==================== */
+function profP(){
+  var dub=curDub();
+  var bal=dub?getBalance(user.id,dub.id):0;
+  var achs=db.by("achievements","uid",user.id);
+  var h='<div class="card" style="text-align:center"><div style="font-size:60px">'+(user.ph||"👤")+'</div><div style="font-size:20px;font-weight:700">@'+user.nick+'</div><div style="font-size:11px;color:#64748b">ID: '+user.id+'</div><div style="margin-top:8px"><span class="stat-pill">⭐ '+(user.rep||10000)+'</span><span class="stat-pill">'+achs.length+' 🏆</span></div></div>';
+  h+='<div class="card"><div class="card-head">💰 Баланс</div><div class="info-row"><span>Дубли</span><span>'+U.money(bal)+' Ð</span></div></div>';
+  
+  // Благотворительность и Пенсия
+  h+='<div class="card"><div class="card-head">⭐ Рейтинг и Социалка</div>';
+  h+='<p style="font-size:12px;color:#64748b;margin-bottom:8px">Благотворительность: 10 000 Ð = +1 к рейтингу. Деньги идут в пенсионный фонд.</p>';
+  h+='<button class="btn btn-success btn-full" onclick="donateToPension()">❤️ Внести 10 000 Ð в пенсионный фонд</button>';
+  h+='<button class="btn btn-cyan btn-full mt8" onclick="checkPensionStatus()">📋 Статус пенсии</button>';
+  h+='</div>';
+  
+  h+='<div class="card"><div class="card-head">🏆 Достижения ('+achs.length+')</div>';
+  if(achs.length){achs.slice().reverse().forEach(function(a){h+='<div class="achievement"><div style="font-size:28px">'+a.icon+'</div><div style="flex:1"><div style="font-weight:700">'+a.name+'</div><div style="font-size:11px">'+a.desc+'</div></div></div>'})}else h+='<p style="color:#6b7280;font-size:12px">Пока нет достижений</p>';
+  h+='</div>';
+  h+='<button class="btn btn-warning btn-full" onclick="chPw()">🔐 Сменить пароль</button><button class="btn btn-danger btn-full mt8" onclick="out()">🚪 Выйти</button>';
+  return h
+}
+
+function donateToPension(){
+  var dub=curDub();
+  var bal=getBalance(user.id,dub.id);
+  if(bal<10000) return alert("Недостаточно средств (нужно 10 000 Ð)");
+  withdrawMoney(user.id,dub.id,10000);
+  setRep((user.rep||10000)+1);
+  // Добавляем в пенсионный фонд правительства
+  var prvo=db.all("factions").find(function(f){return f.isPRVO||f.cat==="pravo"});
+  if(prvo){
+    prvo.treasury=(prvo.treasury||0)+10000;
+    db.upd("factions",prvo.id,{treasury:prvo.treasury});
+  }
+  showNotif("❤️ Благотворительность","Вы внесли 10 000 Ð в пенсионный фонд! +1 к рейтингу");
+  render();
+}
+
+function checkPensionStatus(){
+  var prvo=db.all("factions").find(function(f){return f.isPRVO||f.cat==="pravo"});
+  var assigned=db.one("pensionAssign","userId",user.id);
+  var h='<div style="line-height:1.8">';
+  h+='<p><b>Пенсионный фонд:</b> '+(prvo?U.money(prvo.treasury||0)+' Ð':"Нет данных")+'</p>';
+  if(assigned){
+    h+='<p style="color:#22c55e"><b>✓ Пенсия назначена!</b></p>';
+    h+='<p>Сумма: '+U.money(assigned.amt||0)+' Ð в месяц</p>';
+  }else{
+    h+='<p style="color:#ef4444"><b>✗ Пенсия не назначена</b></p>';
+    h+='<p style="font-size:12px;color:#64748b">Пенсия назначается только Правительством (ПР-ВО). Обратитесь к лидеру Правительства.</p>';
+  }
+  h+='</div>';
+  md("📋 Статус пенсии",h,true);
+}
 function chPw(){md("🔐 Пароль",'<input type="password" id="oP" class="input" placeholder="Текущий"><input type="password" id="nP" class="input" placeholder="Новый"><button class="btn btn-success btn-full" onclick="savePw()">💾 Сохранить</button>')}
 function savePw(){var o=document.getElementById("oP").value,n=document.getElementById("nP").value;if(U.hash(o)!==user.pwh)return alert("Неверный");if(n.length<4)return alert("Мин 4");db.upd("users",user.id,{pwh:U.hash(n)});user=db.get("users",user.id);clM();alert("Изменён!")}
 function out(){user=null;localStorage.removeItem("u20");render()}
@@ -602,7 +658,21 @@ function mvdKoAP(fid){md("📗 КоАП",'<p>В разработке</p>')}
 function mvdWanted(){var w=db.all("wanted").filter(function(x){return x.act});var h="";w.forEach(function(x){var u=db.get("users",x.uid);h+='<div class="list-item"><div class="list-item-content"><div class="list-item-title">@'+(u?u.nick:"?")+'</div><div class="list-item-sub">'+x.rsn+'</div></div></div>'});if(!w.length)h='<p>Никого нет</p>';md("🚨 Розыск",h)}
 function mvdKPK(){md("📟 КПК",'<input id="kpkQ" class="input" placeholder="Ник или ID"><button class="btn btn-primary btn-full mt8" onclick="mvdKPKSearch()">🔍 Найти</button><div id="kpkRes" class="mt8"></div>',true)}
 function mvdKPKSearch(){var q=(document.getElementById("kpkQ").value||"").trim();var box=document.getElementById("kpkRes");var uid=null;if(/^\d+$/.test(q)){if(db.get("users",parseInt(q)))uid=parseInt(q)}if(!uid){var uu=db.all("users").find(function(u){return u.nick.toLowerCase()===q.toLowerCase()});if(uu)uid=uu.id}if(!uid){box.innerHTML='<p style="color:#ef4444">Не найдено</p>';return}box.innerHTML=kpkRenderDossier(uid)}
-function kpkRenderDossier(uid){var u=db.get("users",uid);if(!u)return"";var dub=curDub();var bal=dub?getBalance(uid,dub.id):0;var w=isW(uid);var h='<div class="card" style="background:#0f172a;color:#e2e8f0">';h+='<div style="font-size:18px;font-weight:700">@'+u.nick+' · ID '+uid+'</div>';h+='<div class="info-row" style="border-color:#334155"><span>Баланс</span><span>'+U.money(bal)+' Ð</span></div>';h+='<div class="info-row" style="border-color:#334155"><span>Розыск</span><span>'+(w?'<span class="wanted">ДА</span>':'нет')+'</span></div>';h+='<div class="info-row" style="border-color:#334155"><span>Репутация</span><span>⭐ '+(u.rep||100)+'</span></div>';h+='</div>';return h}
+function kpkRenderDossier(uid){
+  var u=db.get("users",uid);
+  if(!u)return"";
+  var dub=curDub();
+  var bal=dub?getBalance(uid,dub.id):0;
+  var w=isW(uid);
+  var rep=u.rep||10000;
+  var h='<div class="card" style="background:#0f172a;color:#e2e8f0">';
+  h+='<div style="font-size:18px;font-weight:700">@'+u.nick+' · ID '+uid+'</div>';
+  h+='<div class="info-row" style="border-color:#334155"><span>Баланс</span><span>'+U.money(bal)+' Ð</span></div>';
+  h+='<div class="info-row" style="border-color:#334155"><span>Розыск</span><span>'+(w?'<span class="wanted">ДА</span>':'нет')+'</span></div>';
+  h+='<div class="info-row" style="border-color:#334155"><span>Репутация</span><span>⭐ '+rep+'</span></div>';
+  h+='</div>';
+  return h
+}
 
 /* ==================== ФСБ: СЛЕЖКА ПО ГЕОЛОКАЦИИ ==================== */
 function fsbChats(){if(!canUseFSB())return alert("Только ФСБ");var users=db.all("users");var h='';users.forEach(function(u){h+='<div class="list-item" onclick="fsbReadUser('+u.id+')"><div class="list-item-icon">👤</div><div class="list-item-content"><div class="list-item-title">@'+u.nick+'</div></div></div>'});md("📨 Чаты",h)}
@@ -761,7 +831,7 @@ function buyBlackMarket(name,price){
   if(getBalance(user.id,dub.id)<price)return alert("Недостаточно");
   if(!confirm("Вы уверены? Это снизит репутацию на 20⭐ и может привлечь внимание МВД."))return;
   withdrawMoney(user.id,dub.id,price);
-  db.upd("users",user.id,{rep:Math.max(0,(user.rep||100)-20)});
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-20)});
   // 40% шанс попасться
   if(Math.random()<0.4){
     db.add("wanted",{uid:user.id,rsn:"Покупка на чёрном рынке",act:true,by:9999,d:Date.now()});
@@ -864,7 +934,7 @@ function createSlot(i){
   if(!nick||nick.trim().length<2)return;nick=nick.trim();
   if(db.one("users","nick",nick)){alert("Ник занят");return}
   var pw=prompt("Пароль (мин 4):");if(!pw||pw.length<4)return alert("Мин 4 символа");
-  var uid=db.add("users",{nick:nick,pwh:U.hash(pw),adm:false,blk:false,accB:false,ph:"👤",rep:100});
+  var uid=db.add("users",{nick:nick,pwh:U.hash(pw),adm:false,blk:false,accB:false,ph:"👤",rep:10000});
   var dub=curDub();if(dub)giveDenoms(uid,dub.id,5000);
   db.add("creditHistory",{userId:uid,score:100,recs:[]});
   if(db.d.aid===null){db.d.aid=uid;db.upd("users",uid,{adm:true})}
@@ -903,7 +973,7 @@ hdr=function(){
   // Вставляем погоду и репутацию в шапку
   var extra='<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">'+
     '<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">'+(w?w.cond+" "+w.temp+"°C":"")+'</span>'+
-    '<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">⭐ '+(user.rep||100)+'</span>'+
+    '<span style="font-size:11px;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px">⭐ '+(user.rep||10000)+'</span>'+
     '<button class="btn btn-dark btn-sm" onclick="backToSlots()" title="Сменить аккаунт">🔄</button>'+
   '</div>';
   return orig.replace('</div></div>',extra+'</div></div>');
@@ -977,12 +1047,12 @@ function scamAccept(){
   if(getBalance(user.id,dub.id)<500)return alert("Недостаточно");
   withdrawMoney(user.id,dub.id,500);
   localStorage.setItem("scam_"+user.id,"1");
-  db.upd("users",user.id,{rep:Math.max(0,(user.rep||100)-10)});
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-10)});
   clM();
   // 30% шанс что мошенник спалится и тебя спасут
   if(Math.random()<0.3){
     giveDenoms(user.id,dub.id,1000);
-    db.upd("users",user.id,{rep:Math.min(200,(user.rep||100)+5)});
+    db.upd("users",user.id,{rep:Math.min(200,(user.rep||10000)+5)});
     showNotif("🕵️ ФСБ вмешалось!","Мошенник спалился. Возврат 500 Ð + бонус 500 Ð от ФСБ");
     pushSms(user.id,"🕵️ ФСБ отследило мошенника! Деньги возвращены + бонус");
   }else{
@@ -994,7 +1064,7 @@ function scamAccept(){
 function scamReport(){
   localStorage.setItem("scam_"+user.id,"1");
   db.add("wanted",{uid:9999,rsn:"Мошенничество (заявление @"+user.nick+")",act:true,by:user.id,d:Date.now()});
-  db.upd("users",user.id,{rep:Math.min(200,(user.rep||100)+10)});
+  db.upd("users",user.id,{rep:Math.min(200,(user.rep||10000)+10)});
   clM();
   pushSms(user.id,"🚨 Заявление принято! Мошенник в розыске. +10 к репутации");
   showNotif("🚨 Молодец!","Мошенник объявлен в розыск. +10 ⭐");
@@ -1061,7 +1131,7 @@ function openTablet(){
     '<div style="display:flex;gap:12px;align-items:center">'+
       '<span>🌤️ '+(w?w.temp+"°C":"")+'</span>'+
       '<span>💰 '+U.money(bal)+' Ð</span>'+
-      '<span>⭐ '+(user.rep||100)+'</span>'+
+      '<span>⭐ '+(user.rep||10000)+'</span>'+
       '<button style="background:none;border:none;color:#f87171;font-size:20px;cursor:pointer" onclick="closeTablet()">✕</button>'+
     '</div></div>';
   h+='<div class="tablet-body">';
@@ -1134,7 +1204,7 @@ function openTabletSettings(){
     '<div class="card"><div class="card-head">🎨 Оформление</div>'+
     '<div class="info-row"><span>Тёмная тема</span><div class="toggle '+(isDark?"on":"")+'" onclick="toggleDarkV19(this)"></div></div></div>'+
     '<div class="card"><div class="card-head">👤 Аккаунт</div>'+
-    '<div class="info-row"><span>Репутация</span><span>⭐ '+(user.rep||100)+'</span></div>'+
+    '<div class="info-row"><span>Репутация</span><span>⭐ '+(user.rep||10000)+'</span></div>'+
     '<button class="btn btn-warning btn-full mt8" onclick="chPw()">🔐 Сменить пароль</button>'+
     '<button class="btn btn-danger btn-full mt8" onclick="clM();backToSlots()">🔄 Сменить аккаунт</button></div>',true);
 }
@@ -1261,7 +1331,7 @@ function buyBlackMarket(name,price,icon){
   if(getBalance(user.id,dub.id)<price)return alert("Недостаточно");
   if(!confirm("Купить «"+name+"» за "+U.money(price)+" Ð?\n\n⚠️ -20 к репутации\n⚠️ 40% шанс розыска"))return;
   withdrawMoney(user.id,dub.id,price);
-  db.upd("users",user.id,{rep:Math.max(0,(user.rep||100)-20)});
+  db.upd("users",user.id,{rep:Math.max(0,(user.rep||10000)-20)});
   logRu("Чёрный рынок: @"+user.nick+" купил «"+name+"»");
   if(Math.random()<0.4){
     db.add("wanted",{uid:user.id,rsn:"Покупка на чёрном рынке («"+name+"»)",act:true,by:9999,d:Date.now()});
