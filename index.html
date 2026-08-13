@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DubleCass V20 — OS Edition</title>
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Иконки (используем emoji для оффлайна, но подключим шрифт для красоты если есть сеть) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dark-theme">
+
+    <!-- Уведомления (Сверху) -->
+    <div id="notification-area"></div>
+
+    <!-- Экран загрузки / Переключения аккаунтов -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <h1>DubleCass <span class="version">V20</span></h1>
+            <p class="subtitle">Операционная система планшета</p>
+            
+            <div id="account-list">
+                <!-- Сюда JS добавит слоты аккаунтов -->
+            </div>
+
+            <button id="add-account-btn" class="btn-primary">
+                <i class="fas fa-plus"></i> Новый аккаунт
+            </button>
+            
+            <div class="admin-toggle">
+                <input type="password" id="admin-code" placeholder="Код доступа">
+                <button id="check-admin-btn">Войти как Админ/Лидер</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной интерфейс Планшета (OS) -->
+    <div id="os-screen" class="screen">
+        <!-- Верхняя панель (Статус бар) -->
+        <header class="status-bar">
+            <div class="left-status">
+                <span id="clock">12:00</span>
+                <span id="weather-widget"><i class="fas fa-cloud"></i> --°C</span>
+            </div>
+            <div class="center-status">
+                <span id="current-user-name">Гость</span>
+                <span id="user-balance-mini" class="balance-badge">0 Ð</span>
+            </div>
+            <div class="right-status">
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-three-quarters"></i>
+                <button id="logout-btn" class="icon-btn"><i class="fas fa-power-off"></i></button>
+            </div>
+        </header>
+
+        <!-- Рабочий стол с Папками -->
+        <main class="desktop">
+            <!-- Сетка приложений -->
+            <div id="app-grid">
+                <!-- Приложения генерируются через JS -->
+            </div>
+
+            <!-- Док-панель (Избранное) -->
+            <div class="dock">
+                <div class="dock-item" data-app="dublinet"><i class="fas fa-globe"></i><span>Нет</span></div>
+                <div class="dock-item" data-app="dubligramm"><i class="fas fa-paper-plane"></i><span>Чат</span></div>
+                <div class="dock-item" data-app="mybank"><i class="fas fa-university"></i><span>Банк</span></div>
+                <div class="dock-item" data-app="settings"><i class="fas fa-cog"></i><span>Настр.</span></div>
+            </div>
+        </main>
+
+        <!-- Окно открытого приложения (Модалка на весь экран) -->
+        <div id="app-window" class="app-window hidden">
+            <div class="window-header">
+                <button id="close-app-btn" class="back-btn"><i class="fas fa-arrow-left"></i></button>
+                <h2 id="app-title">Название приложения</h2>
+                <div class="window-controls">
+                    <button class="minimize-btn"><i class="fas fa-minus"></i></button>
+                </div>
+            </div>
+            <div id="app-content" class="window-content">
+                <!-- Контент приложения загружается сюда -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания аккаунта -->
+    <div id="modal-overlay" class="hidden">
+        <div class="modal">
+            <h3 id="modal-title">Создание аккаунта</h3>
+            <div id="modal-body"></div>
+            <div class="modal-actions">
+                <button id="modal-cancel" class="btn-secondary">Отмена</button>
+                <button id="modal-confirm" class="btn-primary">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="core.js"></script>
+    <script src="apps.js"></script>
+</body>
+</html>

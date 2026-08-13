@@ -1,0 +1,1 @@
+Nothing should be ignored in this case, as the added files (`duble_os_full.html`, `duble_tablet.html`) are HTML source files that should be tracked in version control, and there are no build artifacts, dependencies, or temporary files in the changes.
